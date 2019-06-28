@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Diamonds | Controller</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" href="../styles/controller.css">
+	<link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+
+</head>
+<body>
+<div class="buttons">
+	<button onclick="socket.emit('triggerBeginning')">Beginning</button>
+	<button onclick="socket.emit('triggerUtopalypse')">Utopia is our Apocalypse</button>
+	<button onclick="socket.emit('triggerDiamonds')">Diamonds in Distopia</button>
+	<button onclick="socket.emit('triggerEnding')">Ending</button>
+</div>
+<div class="generatedText stuff"></div>
+<div class="gentextbuttons">
+	<button onclick="nexPhraseClick();"> --- NEXT PHRASE --- </button>
+</div>
+
+<div class="scroll-wrapper">
+	<!-- <iframe src="" class="myFrame"></iframe> -->
+</div>
+<div class="scoreText stuff"></div>
+
+	<script type="text/javascript">
+		
+		// var socket = io.connect('130.39.92.112:8000/');
+		var socket = io.connect(window.location.origin , {transports:['websocket']} );
+
+		var currentPhrase;
+		var pArray = [];
+		var pACount = 0;
+		var pALimit = 10;
+
+ 		socket.emit('addme', {name: "controller"});
+		
+		socket.on('chat', function(data) {
+			console.log(data);
+		});
+
+		socket.on('setSection', function(data) {
+			console.log("The section is now: " + data.title);
+		});
+
+		function nexPhraseClick() {
+			document.getElementsByClassName('generatedText')[0].innerHTML= pArray[pACount];
+			currentPhrase = pArray[pACount];
+
+			console.log("pACount", pACount);
+			if (pACount < pArray.length) {
+				pACount++;
+			} else {
+				pACount = 0;
+			}
+		}
+
+		socket.on('itemback', function(data){
+			// console.log("itemback: " + data.phrase);
+			
+			if(pArray.length < pALimit) {
+				pArray.unshift(data.phrase);
+				console.log("if", pArray.length);
+			} else {
+				pArray.unshift(data.phrase);
+				pArray.pop();
+				console.log("else", pArray.length);
+			}
+			// pArray[pACount] = data.phrase;
+
+			// currentPhrase = data.phrase;
+
+			var generatedText = document.getElementsByClassName('generatedText')[0];
+			// generatedText.classList.add("blurAnimation");
+			// generatedText.classList.add("oldgentext");
+			var mf = 0;
+			generatedText.style.webkitFilter = "blur("+mf+"px)";
+			// console.log("COLOROOROROROROR", data.color);
+			generatedText.style.color = "black";
+			// generatedText.style.fontSize = "2em";
+
+			// var headerHeight = $('.generatedText').outerHeight();
+			// $('.scoreText').css('top',headerHeight);
+
+			var st = document.getElementsByClassName('scoreText')[0];
+		    // st.style.whiteSpace = "pre";
+		    // st.style.overflowX = "scroll";
+		    // st.style.overflowY = "scroll";
+			
+			
+		});
+
+		// function scrollto(element){ 
+		// 	var ele = document.getElementsByClassName(element)[0];
+		// 	if (!!ele) {
+		// 		window.scrollTo(ele.offsetLeft,ele.offsetTop);
+		// 	}
+		// }
+
+		function clickgo() {
+			// var elements = document.getElementsByClassName(this.className);
+			// var section = elements[0].className.split(" ")[1];
+			// scrollto(section);
+			// var num = section.split("s")[1];
+			console.log("curr:", currentPhrase);
+			socket.emit("selectedPhrase", currentPhrase);
+		}
+
+		window.onload = function() {
+			var xhr= new XMLHttpRequest();
+			xhr.open('GET', '../data/score.txt', true);
+			xhr.onreadystatechange= function() {
+			    if (this.readyState!==4) return;
+			    if (this.status!==200) return; // or whatever error handling you want
+			    document.getElementsByClassName('scoreText')[0].innerHTML= this.responseText;
+			    var st = document.getElementsByClassName('scoreText')[0];
+			    // st.style.whiteSpace = "pre";
+			    // st.style.overflowX = "scroll";
+			    // st.style.overflowY = "scroll";
+
+			};
+			xhr.send();
+			// document.getElementsByClassName("myFrame")[0].src="http://"+window.location.host;
+
+		};
+
+		// document.addEventListener('DOMContentLoaded', function(event){
+		// 	console.log("dom ready", window.location.host);
+
+		// }, false);
+
+
+		(function addEvents() {
+			document.getElementsByClassName('generatedText')[0].addEventListener("click", clickgo, false);
+				// for (var i = 0; i < phrases.length; i++) {
+				// 	phrases[i].addEventListener("click", clickgo, false);
+				// }
+		})();
+
+		// $(window).bind('touchmove', function(e) {
+		// 	e.preventDefault();
+		// 	}
+		// );
+
+		// window.onload = function() {
+
+		// 	function addEvents() {
+		// 		var phrases = document.getElementsByClassName('sec');
+		// 		for (var i = 0; i < phrases.length; i++) {
+		// 			phrases[i].addEventListener("click", clickgo, false);
+		// 		}
+		// 	}
+
+		// };
+
+	</script>
+	
+</body>
+</html>

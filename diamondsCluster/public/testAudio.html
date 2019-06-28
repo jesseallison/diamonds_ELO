@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>testAudio</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Jesse Allison">
+	<!-- Date: 2016-02-24 -->
+	
+	<script type="text/javascript" src="scripts/mespeak/mespeak.full.js"></script>
+	<script type="text/javascript" src="scripts/Tone.js"></script>
+	
+	
+	<script>
+	
+		// Add Chords, Progression, feedback, comb filtering, shimmer!
+		
+		var self = this;
+		
+		
+		meSpeak.loadConfig("scripts/mespeak/mespeak_config.json");
+		//meSpeak.loadVoice('scripts/mespeak/voices/en/en-us.json');
+		meSpeak.loadVoice('scripts/mespeak/voices/en/en.json');
+		
+				// Safety. On iOS, if you speak too soon, it gets defered onto a que and nothing works from there on out.
+		if (meSpeak.isConfigLoaded() && meSpeak.isVoiceLoaded('en/en')) {
+			meSpeak.speak('hello world');
+		}
+		
+		
+		
+		var DiamondSound = function () {
+			this.tone = new Tone();
+			
+			this.pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+			this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+			
+			this.synth = new Tone.SimpleSynth({
+				"oscillator" : {
+					"type" : "sine"
+			 },
+			 "envelope" : {
+			 	"attack" : 2.0,
+				"decay" : 0.5,
+				"sustain" : 0.8,
+				"release" : 2.0
+			 }
+			}).toMaster();
+
+			this.playerDiamonds = new Tone.Player("data/diamonds_in_distopia.mp3").toMaster();
+			this.playerKepler = new Tone.Player("data/Kepler_Star.mp3").toMaster();
+
+			this.gainy = new Tone.Gain().toMaster();
+			this.filt2 = new Tone.Filter(this.tone.midiToNote(this.pitch+12), "bandpass").connect(this.gainy);
+			this.filt = new Tone.Filter(this.tone.midiToNote(this.pitch+12), "bandpass").connect(this.filt2);
+			this.filt.Q.value = 9;
+			this.filt.gain.value = 40;
+			this.filt2.Q.value = 2;
+			this.filt2.gain.value = 40;
+			this.ns = new Tone.Noise('pink').connect(this.filt);
+			this.gainy.gain.value = 10.;
+			
+			this.synth.triggerAttackRelease("C4", "8n",{} , 0.25);
+			
+			// meSpeak.setAudioContext(this.tone.context);
+			// meSpeak.speakToNode(this.filt);
+			//meSpeak.speak('Diamonds');
+			
+			this.playPitch = function () {
+				this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch+12), 5);
+			};
+
+			this.triggerPitch = function () {
+				this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch+12), 5);
+				// socket.emit('triggerPitch', dSound.pitch);
+			};
+
+			this.playDiamonds = function() {
+				this.playerDiamonds.start();
+			};
+
+			this.playKepler = function() {
+				this.playerKepler.start();
+			};
+			
+			this.triggerDiamonds = function() {
+				this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch+12), 5);
+				this.playerDiamonds.start();
+				// socket.emit('triggerCauseway', causeSound.pitch);
+
+				var elements = document.getElementsByClassName("mainTitle");
+				// elements[0].className += " clicked";
+				elements[0].style.backgroundColor = myColor;
+			};
+			
+			this.speak = function(text) {
+				this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+				var freq = this.tone.midiToNote(this.pitch+12);
+				this.filt.frequency.value = (freq);
+				this.filt2.frequency.value = (freq);
+				if (meSpeak.isConfigLoaded() && meSpeak.isVoiceLoaded('en/en')) {
+					meSpeak.speak(text);
+					console.log('Speak! ', text);
+				}
+				console.log('ConfigLoaded? ', meSpeak.isConfigLoaded());
+				console.log('VoiceLoaded? ', meSpeak.isVoiceLoaded('en/en'));
+				this.synth.triggerAttackRelease(freq, "4n",{} , 0.15);
+			};
+		}
+		
+		var dSound = new DiamondSound();
+		meSpeak.setAudioContext(dSound.tone.context);
+		meSpeak.speakToNode(dSound.filt);
+		
+		
+		
+/*	
+		tone = new Tone();
+		pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+		pitch = pitchCollection[Math.floor(Math.random() * (pitchCollection.length))];
+*/
+/*
+		function toneSetup() {
+			// var ctx = meSpeak.getAudioContext();
+			// Tone.setContext(ctx);		// only works after meSpeak has loaded...
+			Tone.startMobile();
+			
+			self.synth = new Tone.SimpleSynth().toMaster();
+
+			//play a middle c for the duration of an 8th note
+			self.synth.triggerAttackRelease("C4", "8n",{} , 0.25);
+
+			self.gainy = new Tone.Gain().toMaster();
+			self.filt2 = new Tone.Filter(tone.midiToNote(pitch+12), "bandpass").connect(self.gainy);
+			self.filt = new Tone.Filter(tone.midiToNote(pitch+12), "bandpass").connect(self.filt2);
+			self.filt.Q.value = 9;
+			self.filt.gain.value = 40;
+			self.filt2.Q.value = 2;
+			self.filt2.gain.value = 40;
+			self.ns = new Tone.Noise('pink').connect(self.filt);
+			self.gainy.gain.value = 10.;
+			
+			meSpeak.setAudioContext(Tone.context);
+			meSpeak.speakToNode(self.filt);
+			meSpeak.speak('Diamonds');
+		}
+*/		
+		// ****** mespeak.js *******//
+/*		
+		meSpeak.loadConfig("scripts/mespeak/mespeak_config.json");
+		//meSpeak.loadVoice('scripts/mespeak/voices/en/en-us.json');
+		meSpeak.loadVoice('scripts/mespeak/voices/en/en.json');
+		//meSpeak.speak('hello world',{},toneSetup());
+		
+		toneSetup();
+*/		
+		
+		
+		/// ********* Auto Span Speech Enablement ********** ///
+		
+		var transcriptElementID = "transcript";
+		var UNDEFINED = "undefined",
+				STRING = "string",
+				FUNCTION = "function",
+				SPACE = "&nbsp;",
+				MAYBE = "maybe",
+				PROBABLY = "probably",
+				TYPE = "type",
+				SPAN = "span",
+				DATABEGIN = "data-begin",
+				DATAEND = "data-end",
+				TRUE = true,
+				FALSE = false,
+				$id = function (id){ return document.getElementById(id); },
+				//Determine if HTML element was passed as argument or element's ID (string)
+				//If string, get it using $id (internal shortcut for document.getElementById)			
+				transcript_element,
+				caption_array = []
+		
+		window.onload = function () {
+			transcript_element = $id(transcriptElementID);
+			// console.log(transcript_element);
+			if(caption_array.length === 0){ caption_array = getSpans(transcript_element); }
+			// console.log("captions: ", caption_array);
+			enableTranscript();
+		};
+				
+		
+		//Get all caption text, store in array
+			function getSpans(transcript_el){
+
+				if(!transcript_el){ return FALSE; }
+
+				var spans = transcript_el.getElementsByTagName(SPAN),
+					captionArray = [];
+
+				for(var i=0, count = spans.length; i < count; i++){
+					// var beginNum = spans[i].getAttribute(DATABEGIN);		// useful to embed any type of attribute
+					// var endNum = spans[i].getAttribute(DATAEND);
+					spans[i].setAttribute("number",i);
+					captionArray[i] = spans[i].innerHTML;
+				}
+				return captionArray;
+			};
+		
+		function enableTranscript(custom_handler, alt_video_element){
+
+					//Append classname to transcript text container. 
+					//This allows developers to turn on CSS styling for hover state
+					//if(transcript_element.className.indexOf(transcript_enabled_class) === -1){
+					//	transcript_element.className = transcript_element.className + " " +transcript_enabled_class;
+					//}
+
+					//Using event delegation to make *transcript_element* clickable instead of individual spans
+					transcript_element.onclick = function (e){
+
+						var event = e || window.event,
+							target = event.target || event.srcElement,
+							position;
+
+						if (target.nodeName.toLowerCase() === SPAN) {
+
+							position = target.getAttribute("number");
+
+							if(typeof position === UNDEFINED){ return FALSE; }
+							
+							// console.log("Speak: ", caption_array[position]);
+							/*
+							pitch = pitchCollection[Math.floor(Math.random() * (pitchCollection.length))];
+							var freq = tone.midiToNote(pitch+12);
+							self.filt.frequency.value = (freq);
+							self.filt2.frequency.value = (freq);
+							self.synth.triggerAttackRelease(freq, "4n",{} , 0.15);
+							meSpeak.speak(caption_array[position]);
+							*/
+							
+							dSound.speak(caption_array[position]);
+							
+						}
+					};
+				};
+		
+	</script>
+</head>
+<body>
+
+<button onclick="Tone.startMobile();">Start</button>
+<button onclick="if (meSpeak.isConfigLoaded() && meSpeak.isVoiceLoaded('en/en')) {meSpeak.speak('hello world');}">Speak</button>
+<button onclick="meSpeak.resetQueue();">Reset</button>
+
+<div id="transcript">
+<pre>
+	<span>Vincent A. Cellucci </span>
+	<span> </span>
+	<span>Bound by Digital Countries </span>
+	<span> </span>
+	<span>all know who you are whole-hearted  </span>
+	<span>                           you download an episode often </span>
+	<span>        hold down apostasy jobs  </span>
+	<span>                              dancing sunlight in psychoanalysis  </span>
+	<span> </span>
+	<span>                 new dimension     new struggle </span>
+	<span>street view drop in the dow jones  </span>
+	<span>departs on facebook, twitter, google maps  </span>
+	<span>can’t afford allegiance                  </span>
+	<span>                       rates “the 20th century expressed this”   </span>
+	<span>                                                            the positive forces  </span>
+	<span>                                    eliminate the common denominator  </span>
+	<span>                                                        all regularities  </span>
+	<span>                                                        steps toward unification  </span>
+	<span>                                       built borderless   cheap   even free </span>
+	<span> </span>
+	<span>we farmed fish fisherman </span>
+	<span>       assign values to the viewer </span>
+	<span>                when streaming’s easy  </span>
+	<span>how we numb </span>
+	<span>used to watching </span>
+	<span>                                 people drown </span>
+	<span>everybody today </span>
+	<span>unraveled connection </span>
+	<span>                     everyone elements  </span>
+	<span> </span>
+	<span>answer particles      an hour of sea </span>
+	<span>each and every year </span>
+	<span>                  wasn’t taken for granted           </span>
+	<span>there are 14,000 planes </span>
+	<span>the amount of salmon              to disappear  </span>
+	<span>damns EVERYWHERE </span>
+	<span>but are there interfaces </span>
+	<span>                                               that tell of great nature? </span>
+	<span> </span>
+	<span>we often say to companies  </span>
+	<span>                                                      eating themselves, evolve  </span>
+	<span>                               it becomes a threat to spark a solution </span>
+	<span> </span>
+	<span>                                                              and we keep growing </span>
+	<span>                                             say this is what I found </span>
+	<span>attempting to reach outside  </span>
+	<span>                                                        the world and make way                </span>
+	<span> </span>
+	<span>complicit comeback  </span>
+	<span>                                       of the collaborative  </span>
+	<span>                                                    red-eye flock </span>
+	<span>                                                    don’t mind stepping back for clean water </span>
+	<span> </span>
+	<span>the radioactive boys of dust  </span>
+	<span>threaten observers        </span>
+	<span>committed organic  </span>
+	<span>                                     ubiquity of gluttons </span>
+	<span>                                                           outside interference </span>
+	<span>felt like today </span>
+	<span>                              a fish    now two    blooms </span>
+	<span>                              mean moon phenomena  </span>
+	<span>symmetries struggle cyborgs </span>
+	<span> </span>
+	<span>                   disarm  </span>
+	<span>the certainty of domination  </span>
+	<span>                   preferred by our elders   </span>
+	<span>                   defines the nowhered </span>
+	<span>                                                       coded origins story  </span>
+	<span>                                                               refuge-floating </span>
+	<span>                                     opaque day-to-today biology  </span>
+	<span> </span>
+	<span>mode of mud </span>
+	<span>matter provided </span>
+	<span>man analyzed Eden  </span>
+	<span>then analyzed  </span>
+	<span>                            the people </span>
+	<span>                            the good and the grave </span>
+	<span>                                              one garden; we script war </span>
+	<span>                     cross-hairs two tiny lines joined against </span>
+	<span> </span>
+	<span>our utopia is our apocalypse </span>
+	<span>                                                       cripples water </span>
+	<span>                                          people taking shelter  </span>
+	<span>as if concern were an </span>
+	<span>enforced homelessness </span>
+	<span>                                    the dream of infrastructure </span>
+	<span>                                                   limited to the global </span>
+	<span>                                                   intimately unscathed  </span>
+	<span> </span>
+	<span>we tool the endless pursuit  </span>
+	<span>                                       one which does not us </span>
+	<span>                       manufacturing a hi-tech public </span>
+	<span>                                                     sight-servers  </span>
+	<span>                        industry synthesis </span>
+	<span>                        armistress  </span>
+	<span>                      teller technology  </span>
+	<span> </span>
+	<span>electronics educated  </span>
+	<span>the age of eyes  </span>
+	<span>                                out of visible energies  </span>
+	<span>                    arises art  </span>
+	<span>displacing  </span>
+	<span>diamonds in dystopia  </span>
+	<span> </span>
+	<span>                        the conditions that carry  </span>
+	<span>                                     fear in the patient  </span>
+	<span>               superb skin  </span>
+	<span>liquid parts </span>
+	<span>lights in the shape of your birthday </span>
+	<span> </span>
+	<span>we want the real and painstaking  </span>
+	<span>                  to draw it out as far as planets  </span>
+	<span> </span>
+	<span>everyone who stopped by responded  </span>
+	<span>                                                   with a crisis </span>
+	<span> </span>
+	<span>                                                                solution says </span>
+	<span>                                    I would haven </span>
+	<span>                                                    withholding petroleum  </span>
+	<span>                        essential fuel technology  </span>
+	<span>                        gaping social mirrors  </span>
+	<span> mediated Earth  </span>
+	<span>                     coal-fired population  </span>
+	<span>                                                   who doubts today </span>
+	<span>                                            many need its waste  </span>
+	<span> </span>
+	<span>death is building its answers </span>
+	<span> </span>
+	<span>I’m gonna compare stars  </span>
+	<span>       go adaptable  </span>
+	<span> </span>
+	<span>25 microbes without  </span>
+	<span>                                        we do we knowledge  </span>
+	<span>            come on Earth  </span>
+	<span>                              media  </span>
+	<span>    toxic therapy  </span>
+	<span>                              discuss this child </span>
+	<span>                                                          too expensive to let  </span>
+	<span>                      under evening thriving  </span>
+	<span> irrigating minds:  </span>
+	<span> </span>
+	<span>the one prototype for change  </span>
+	<span> </span>
+	<span>                 more giving systems  </span>
+	<span>sea-sized leaks  </span>
+	<span>                   deepwater indulgence  </span>
+	<span> </span>
+	<span>the justice problem when  </span>
+	<span>I start talking about failure </span>
+	<span>             won’t fix the fissures  </span>
+	<span> </span>
+	<span>             we started for our children  </span>
+	<span>                  up to 26 minds’ depth      </span>
+	<span>                               joined in diameter </span>
+	<span>     drilling your blue stage of flame </span>
+	<span> </span>
+	<span>80% hydrated victorious  </span>
+	<span>         spent to give and give </span>
+	<span> </span>
+	<span>  I throw about forever  </span>
+	<span> “I want to touch it for a minute” </span>
+	<span> </span>
+	<span> </span>
+	<span> </span>
+	<span> </span>
+	<span>
+</pre>
+</div>
+
+</body>
+</html>

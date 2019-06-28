@@ -1,0 +1,132 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Diamonds</title>
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<link rel="stylesheet" href="/styles/main.css">
+
+	<link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<!-- <script type="text/javascript" src="js/Tone.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<body>
+
+	<button onclick="socket.emit('triggerBeginning')">Beginning</button>
+	<button onclick="socket.emit('nextChord')">New Chords</button>
+	<button onclick="socket.emit('triggerUtopalypse')">Utopia is our Apocalypse</button>
+	<button onclick="socket.emit('triggerDiamonds')">Diamonds in Distopia</button>
+	<button onclick="socket.emit('triggerEnding')">Ending</button>
+
+
+
+<script>
+
+	// var socket = io.connect('127.0.0.1:8000');
+	var socket = io.connect(window.location.origin , {transports:['websocket']} );
+	// var socket = io.connect('https://atlab.cct.lsu.edu/', { path: '/causeway/socket.io' });
+
+	var myColor = getRandomColor();
+	var myLocation = [0.5, 0.5];	// Default centered
+
+	socket.emit('addme', {name: "audio_controller", color: myColor, note: 60, location: myLocation});
+
+	socket.on('setSection', function(data) {
+		console.log("The section is now: " + data.title);
+	});
+
+	socket.on('/diamonds/selectedPhrase', function(data) {
+		// console.log("New Phrase: "+ data.phrase);
+		window.max.outlet('/diamonds/selectedPhrase'+" " + data.phrase)
+	});
+
+	socket.on('/causeway/registerUser', function(data) {
+		window.max.outlet('/causeway/registerUser'+ " "+ data.id+" "+ data.color+" "+ data.locationX+" "+ data.locationY+" "+ data.note);
+	});
+
+	socket.on('triggerBeginning', function(data) {
+		window.max.outlet('playKepler');
+	});
+
+	socket.on('nextChord', function(data) {
+		window.max.outlet('nextChord');
+	});
+
+	socket.on('triggerUtopalypse', function(data) {
+		window.max.outlet('playUtopalypse');
+	});
+
+	socket.on('triggerDiamonds', function(data) {
+		window.max.outlet('playDiamonds');
+	});
+
+	socket.on('triggerEnding', function(data) {
+		window.max.outlet('playEnding');
+	});
+
+	function getRandomColor() {
+		var letters = '0123456789ABCDEF'.split('');
+		var color = '#';
+		for (var i = 0; i < 6; i++ ) {
+		    color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
+	}
+
+
+	document.addEventListener('DOMContentLoaded', function() {
+		window.max.outlet('DOM ready');
+		var i = 0;
+		var dictName = 'testDict';
+		var dictText = document.getElementById('dict');
+
+		window.max.bindInlet('resetCounter', function() {
+			i = 0;
+			window.max.outlet('reset');
+		});
+
+		window.max.bindInlet('playChord', function() {
+			var notes = [];
+			for(var key in arguments) {
+			    if(arguments.hasOwnProperty(key)) {
+			        notes.push(arguments[key]);
+			    }
+			}
+			socket.emit('playChord', {notes:notes, duration:'8m'});
+		});
+		
+		window.max.bindInlet('silence', function() {
+			socket.emit('silence');
+		});
+		
+		window.max.bindInlet('audience/enable', function(enabled) {
+			socket.emit('audience/enable', enabled);
+		});
+
+		window.max.bindInlet('sustainChord', function() {
+			var notes = [];
+			for(var key in arguments) {
+			    if(arguments.hasOwnProperty(key)) {
+			        notes.push(arguments[key]);
+			    }
+			}
+			socket.emit('sustainChord', {notes:notes, duration:'8m'});
+		});
+		
+		document.getElementById('the_click_button').addEventListener('click', function() {
+			window.max.outlet('click', ++i);
+		});
+
+	});
+
+</script>
+
+</body>
+
+
+
+</html>
