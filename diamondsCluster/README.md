@@ -1,7 +1,10 @@
 # diamonds_ELO
 
+## TODO
 
-
+- [ ] Reformat parsing of corpus into ≈500 line segments
+- [ ] Add random selection of corpus segments if not enough return.
+ 
 ## Redis
 
 docker pull redis
@@ -25,4 +28,4 @@ Run node ./loadRedis.js
 or 
 npm run-script corpus-prep
 
- 
+

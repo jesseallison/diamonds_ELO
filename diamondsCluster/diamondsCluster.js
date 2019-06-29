@@ -200,7 +200,7 @@ if (cluster.isMaster) {
             var matchingTexts = [];
             var cursor = '0';
 
-            var tedTexts = sscan(data, function(returnedTexts) {
+            var diamondsCorpus = sscan(data, function(returnedTexts) {
                 // console.log("*** Texts Returned ***\n", returnedTexts);
 
                 // Now Markov the texts
@@ -245,7 +245,7 @@ if (cluster.isMaster) {
 
             function sscan(data, callWhenDone) {
                 redisClient.sscan(
-                    "tedTalks",
+                    "diamondsCorpus",
                     cursor,
                     'MATCH', '*' + data + '*',
                     'COUNT', '10', // Find 10 occurances of the word that was tapped in the CORPUS.
@@ -291,8 +291,16 @@ if (cluster.isMaster) {
                         // and terminates when the cursor returned by the server is 0.'
                         if (cursor === '0') {
                             console.log('--- Iteration complete, matches below ---');
-
-                            callWhenDone(matchingTexts); // go markov the results.
+                            if (matchingTexts.length < 10) {
+                                // Add random texts.
+                                let texts = redisClient.srandmember("diamondsCorpus", (10 - matchingTexts.length), function(err, reply) {
+                                    if (err) throw err;
+                                    // console.log("Texts to add: ", JSON.stringify(reply[1]));
+                                    matchingTexts.push(reply[1]);
+                                    console.log(`Added ${(10 - matchingTexts.length)} non matching members`);
+                                    callWhenDone(matchingTexts); // go markov the results.
+                                });
+                            }
                             return matchingTexts; // Must return here or it will loop for a LONG time.
                         }
                         // Iterate through sscan until you've reached cursor === '0' then end it!
@@ -302,16 +310,26 @@ if (cluster.isMaster) {
             }
 
             function markoving(textsToMarkov) {
-                var contents = [];
+
                 // Extracting the content from the text and making one large text to markov.
+                // let contents = [];
+                // for (let i = 0; i < textsToMarkov.length; i++) {
+                //     contents[i] = textsToMarkov[i].content;
+                //     console.log(i + ": " + textsToMarkov[i].title);
+                // }
+                // let joinedText = contents.join(' ');
 
-                for (var i = 0; i < textsToMarkov.length; i++) {
-                    contents[i] = textsToMarkov[i].content;
-                    console.log(i + ": " + textsToMarkov[i].title);
+                // Combining all lines into one text to markov.
+                console.log("Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]), textsToMarkov[0]);
+                let joinedText = "";
+                for (let i = 0; i < textsToMarkov.length; i++) {
+                    if (Array.isArray(textsToMarkov[i])) {
+                        let txt = textsToMarkov[i].join(' ');
+                        joinedText += txt;
+                    }
                 }
-
-                var joinedText = contents.join(' ');
-                // console.log("*** LINES JOINED ***", joinedText);
+                // console.log("*** LINES JOINED ***");
+                // console.log(joinedText);
 
                 markov.loadText(joinedText);
                 // console.log("markov size:", markov.size());
@@ -320,8 +338,8 @@ if (cluster.isMaster) {
                     return console.log("markov not ready"); // Discontinue if markov is not ready
                 }
 
-                var lines = markov.generateSentences(3);
-                var markovJoined = lines.join(' ');
+                let lines = markov.generateSentences(3);
+                let markovJoined = lines.join(' ');
                 return markovJoined;
             }
         });

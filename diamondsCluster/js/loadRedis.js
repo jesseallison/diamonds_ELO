@@ -16,6 +16,7 @@ var textName = "tedTalks"
     // Path to the data to load.  csv file.
     // var dataSet = "../data/corpus.csv";
 var dataSet = "./data/corpus.csv";
+//let dataSet = "./data/lilghettoqueerCORPUS.txt";
 
 // clear the list (if using a list)
 //client.ltrim(listName, -1, -2, handleTrim);
