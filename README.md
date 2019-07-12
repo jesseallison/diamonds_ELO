@@ -3,6 +3,7 @@
 ## TODO
 
 **Now**
+- [ ] Run on web server at http://emdm.io/diamonds (linked to http://atlab.cct.lsu.edu:8081)
 - [ ] Create interface for poet to be able to choose different pairings
 - [ ] Create new portal for audience to find performance currently running
 
