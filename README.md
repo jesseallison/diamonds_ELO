@@ -27,9 +27,3 @@ Also install redis on the machine.
 Run node ./loadRedis.js
 or 
 npm run-script corpus-prep
-
-## Running Eveything
-
-npm run redis && npm run corpus-prep && npm run start
-
-
