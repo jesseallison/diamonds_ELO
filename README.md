@@ -1,10 +1,20 @@
 # Diamonds ELO
 
 ## TODO
+
+**Now**
 - [ ] Create interface for poet to be able to choose different pairings
-- [ ] Create new portal for folks to find performance currently running
+- [ ] Create new portal for audience to find performance currently running
+
+**Soon**
 - [ ] Reformat parsing of corpus into ≈500 line segments
 - [ ] Add random selection of corpus segments if not enough return.
+
+**Later**
+- [ ] Allow poet to load in their own poem and corpus
+
+**Maybe**
+- [ ] Replace markov with machine learning
 
 ## To Start Using Docker Compose
 
