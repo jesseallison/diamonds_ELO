@@ -25,6 +25,7 @@ var io; // the io
 var redis = require('redis'); // Our shared memory database -- stores everything in RAM.  
 var redisAdapter = require('socket.io-redis');
 var redisClient;
+var loadCorpus = require('./js/loadCorpus.js');
 
 // Below process.env variables allow you to set parameters when starting the application.
 // For example you can run, sudo PORT=8080 WORKERS=32 node appCluster.js.
@@ -55,8 +56,6 @@ function start() {
     io = sio.listen(server);
     io.adapter(redisAdapter({ host: redisIP, port: redisPort }));
 
-    // console.log('Redis adapter started with url: ' + redisUrl);
-
     redisClient = redis.createClient(redisPort, redisIP);
 
     redisClient.on('connect', function () {
@@ -67,9 +66,6 @@ function start() {
         console.log("Error " + err);
     });
 }
-
-
-
 
 if (cluster.isMaster) {
 

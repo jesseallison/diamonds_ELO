@@ -3,25 +3,28 @@
 // Utilizing divisions of 500 lines for unstructured data
 // E.g. no title, url, content.  
 
+// variable for redis connections
+var redisPort = process.env.REDISPORT || 6379;
+var redisIP = process.env.REDISIP || "localhost";
+var redisUrl = process.env.REDISURL || 'redis://' + redisIP + ':' + redisPort;
 
 // load required modules
 let redis = require("redis");
-let client = redis.createClient();
+let client = redis.createClient(redisPort, redisIP);
 
 let csv = require('csv-parser');
 let split = require('split');
 let fs = require('fs');
 
-client.on("error", function(err) {
+client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-
 // TextName for storing as a set
 let textName = "diamondsCorpus"
-    // Path to the data to load.  txt file.
-    // var dataSet = "../data/corpus.csv";
-    // var dataSet = "./data/corpus.csv";
+// Path to the data to load.  txt file.
+// var dataSet = "../data/corpus.csv";
+// var dataSet = "./data/corpus.csv";
 let dataSet = "./data/lilghettoqueerCORPUS.txt";
 
 let linesInEachDivision = 200;
@@ -38,7 +41,7 @@ let textInDivision = [];
 // 	console.log("---Trimmed---");
 // }
 
-client.flushall(function(err, res) {
+client.flushall(function (err, res) {
     console.log("flush", res); // will be true if successfull
     // Load the data.
     // fs.createReadStream(dataSet).pipe(csv()).on('data', handleRow).on('end', handleEnd);
@@ -73,7 +76,7 @@ function handleDivision(data) {
 // remove line breaks and other escaped formatting
 // sanitization
 function escape(key, val) {
-    if (typeof(val) != "string") {
+    if (typeof (val) != "string") {
         return val;
     }
 
@@ -100,7 +103,7 @@ function escape(key, val) {
         // .replace(/[\n]/g, '\\n')
         // .replace(/[\r]/g, ' ')
         // .replace(/[\t]/g, '\\t')
-    ;
+        ;
 }
 
 // when done reading the file display total number of items and quit redis connection
@@ -111,7 +114,7 @@ function handleEnd() {
     }
 
     console.log('---Done reading file---');
-    client.scard(textName, function(err, res) {
+    client.scard(textName, function (err, res) {
         console.log("number of sets:", res); // will be true if successfull
     });
 
