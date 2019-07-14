@@ -28,6 +28,19 @@
       <p>Visuals | <strong>Derick Ostrenko</strong></p>
       <p>UnMute your phone and Turn up your volume.</p>
       <p>Then tap the button to begin.</p>
+      <div>
+        <form name="poet-form" onsubmit="return registerPoet()">
+          Name your poetry session.
+          <input type="text" name="session-name">
+          <input type="submit">
+        </form>
+        <form name="audience-form" onsubmit="return registerAudience()">
+          Join a poetry session.
+          <input type="text" name="session-name">
+          <input type="submit">
+        </form>
+      </div>
+      <p><button onclick="getSessions()">Get Session List</button></p>
       <p><a href="#" class="myButton" onclick="Tone.startMobile(); document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block'; document.getElementsByClassName('gentext')[0].style.display = 'block'; document.getElementsByClassName('beforeGentext')[0].style.display = 'block';">Start</a></p>
       <p><em>Tapping is the new snapping!</em></p>
     </div>
@@ -80,6 +93,10 @@
 
       // $(".welcomeText").autoshrink();
 
+      let user = {
+        'name': 'a_user',
+        'id': 1000
+      }
 
       var colors = new Array(
         [62, 35, 255], [60, 255, 60], [255, 35, 98], [45, 175, 230], [255, 0, 255], [255, 128, 0]);
@@ -144,7 +161,7 @@
         transports: ['websocket']
       });
       // var socket = io.connect('https://atlab.cct.lsu.edu/', { path: '/causeway/socket.io' });
-      var myColor = getRandomColor();
+      user.color = getRandomColor();
       var myLocation = [0.5, 0.5]; // Default centered
 
       // seatMap.addEventListener("click", getClickPosition, false);
@@ -170,7 +187,7 @@
 
           // console.log("text:",text);
           // $(e.target).toggleClass('underline');
-          $(e.target)[0].style.backgroundColor = myColor;
+          $(e.target)[0].style.backgroundColor = user.color;
           // console.log($(e.target)[0]);
           dSound.speak(text);
           socket.emit('item', text);
@@ -189,8 +206,8 @@
         // causeSound.triggerPitch();
         // causeSound.triggerCauseway();
         socket.emit('addme', {
-          name: "a_user",
-          color: myColor
+          name: user.name,
+          color: user.color
         });
         // document.getElementsByClassName("sd")[0].style.display = 'none';
         // document.getElementsByClassName("st")[0].style.display = 'block';
@@ -199,8 +216,44 @@
       // **********************************************************
       // Only for the Overlay/intro page
 
+      function registerPoet() {
+        let sessionName = document.forms["poet-form"]["session-name"].value;
+        console.log("Session Name: ", sessionName);
+        socket.emit('registerSession', {
+          'name': sessionName
+        });
+        localStorage.setItem("sessionName", sessionName);
+        return false;
+      };
+
+      function registerAudience() {
+        let sessionName = document.forms["audience-form"]["session-name"].value;
+        console.log("Session Name: ", sessionName);
+        socket.emit('joinSession', {
+          'name': sessionName,
+          'user': user.socketID
+        });
+        localStorage.setItem("sessionName", sessionName);
+        return false;
+      };
+
+      socket.on('sessions', function(data) {
+        console.log("sessions data: " + data);
+        if (data.list) {
+          console.log("Session list: ", data.list);
+        }
+      });
+
+      function getSessions() {
+        socket.emit('getSessions', 'please');
+      }
+
+
+
       socket.on('chat', function(data) {
-        console.log("chat: " + data);
+        console.log("chat: " + data.greeting);
+        user.socketID = data.socketID;
+        localStorage.setItem("socketID", data.socketID);
       });
 
       socket.on('setSection', function(data) {
@@ -242,7 +295,7 @@
       // 	var elements = document.getElementsByClassName(this.className);
       // 	socket.emit('item', elements[0].className.split(" ")[1]);
       // 	elements[0].className += " clicked";
-      // 	elements[0].style.backgroundColor = myColor;
+      // 	elements[0].style.backgroundColor = user.color;
       // }
 
 
@@ -292,7 +345,7 @@
           scoreText.innerHTML = this.responseText;
           // $(".scoreText").textfill();
           actOnText();
-          document.getElementsByClassName("scoreText")[0].style.borderLeft = "15px solid " + myColor;
+          document.getElementsByClassName("scoreText")[0].style.borderLeft = "15px solid " + user.color;
 
           // .style.display = 'block'
           // addEvents();
@@ -309,7 +362,7 @@
       };
 
       $(window).resize(function() {
-        // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + myColor;
+        // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + user.color;
         // console.log("resized");
       });
 

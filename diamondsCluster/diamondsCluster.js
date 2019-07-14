@@ -113,6 +113,8 @@ if (cluster.isMaster) {
   // Kickoff a Worker!
   start();
 
+  // redisClient.del('sessionList');
+
   var rita = require('rita');
 
   var dataObj = [];
@@ -184,7 +186,12 @@ if (cluster.isMaster) {
       socket.userColor = userColor;
       socket.userNote = userNote;
       // .emit to send message back to caller.
-      socket.emit('chat', 'SERVER: You have connected. Hello: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
+      socket.emit('chat', {
+        'greeting': `SERVER: You have connected. Hello: ${username} ID: ${socket.id} Color: ${socket.userColor}`,
+        'name': username,
+        'socketID': socket.id,
+        'color': socket.userColor
+      });
       // .broadcast to send message to all sockets.
       //socket.broadcast.emit('chat', 'SERVER: A new user has connected: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
 
@@ -369,6 +376,51 @@ if (cluster.isMaster) {
         return markovJoined;
       }
     });
+
+
+
+    // *******************************************************
+    // *******************************************************
+    // *******************************************************
+
+    socket.on('registerSession', function(data) {
+      let sessionName = data.name;
+      redisClient.sadd('sessionList', data.name);
+      console.log("Session Name Registered: ", sessionName);
+      updateSessions();
+    });
+
+    socket.on('joinSession', function(data) {
+      let sessionName = data.name;
+      console.log(`User ${data.user} is Joining: ${sessionName}`);
+      redisClient.sismember('sessionList', sessionName, (err, reply) => {
+          redisClient.sadd('sessionList', sessionName);
+        })
+        // Do I save this for use in the audience page to come?
+    });
+
+    function updateSessions() {
+      redisClient.smembers('sessionList', function(err, reply) {
+        let sessionList = reply;
+        console.log(`Session List: ${sessionList}`);
+        io.sockets.emit('sessions', {
+          'list': sessionList
+        });
+      });
+    };
+
+    socket.on('getSessions', function(data) {
+      redisClient.smembers('sessionList', (err, reply) => {
+        let sessionList = reply;
+        console.log(`Sending session List: ${sessionList}`);
+        io.to(socket.id).emit('sessions', {
+          'list': sessionList
+        });
+      });
+    });
+
+
+
 
 
     socket.on('sendchat', function(data) {

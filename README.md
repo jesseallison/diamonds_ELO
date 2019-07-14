@@ -7,7 +7,7 @@
 - [ ] Create interface for poet to be able to choose different pairings
 - [ ] Create new portal for audience to find performance currently running
 - [ ] Update the /data/seeds/xxxx/seed.html files to whatever they need to be to load in the browser properly.
-  - right now index.html has an overlay which could function as the selection, then stay on page for audience, otherwise go to theater, poet, curious.  Alternately, you could pull it out and make it its own page and the audience page its own thing.
+  - The main index page allows users to set a sessionName this is stored on the server as well as in localStorage.  On any subsequent page on this domain you can get this sessionName via:  localStorage.getItem('sessionName')  
 
 **Soon**
 - [x] Reformat parsing of corpus into ≈500 line segments
