@@ -25,7 +25,7 @@ var io; // the io
 var redis = require('redis'); // Our shared memory database -- stores everything in RAM.  
 var redisAdapter = require('socket.io-redis');
 var redisClient;
-var loadCorpus = require('./js/loadCorpus.js');
+
 
 // Below process.env variables allow you to set parameters when starting the application.
 // For example you can run, sudo PORT=8080 WORKERS=32 node appCluster.js.
@@ -95,7 +95,7 @@ function start() {
 }
 
 if (cluster.isMaster) {
-
+  var loadCorpus = require('./js/loadCorpus.js');
   console.log('start cluster with %s workers', workers - 1);
   workers--;
   for (var i = 0; i < workers; ++i) {
@@ -426,26 +426,39 @@ if (cluster.isMaster) {
       // possible data {name, corpus, date, text, filename}
       redisClient.hmset(sessionName + "-session", data, (err, reply) => {
         console.log(data);
+        redisClient.expire(sessionName + '-session', 3600);
       });
       console.log("Session Name Registered: ", sessionName);
       updateSessions();
 
-      redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
-        // do something with the reply
-      })
+      // redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
+      //   // do something with the reply
+      // })
     });
 
     socket.on('joinSession', function(data) {
       let sessionName = data.name;
       console.log(`User ${data.user} is Joining: ${sessionName}`);
       redisClient.sismember('sessionList', sessionName, (err, reply) => {
-          redisClient.sadd('sessionList', sessionName);
+          if (!reply) {
+            redisClient.sadd('sessionList', sessionName);
+          }
         })
         // Do I save this for use in the audience page to come?
       socket.sessionName = sessionName;
       redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
         // do something with the reply
-        socket.corpus = reply;
+        if (reply) {
+          socket.corpus = reply;
+        } else {
+          socket.corpus = corpus;
+          data.corpus = corpus;
+          redisClient.hmset(sessionName + "-session", data, (err, reply) => {
+            console.log(data);
+            redisClient.expire(sessionName + '-session', 3600);
+          });
+        }
+
       })
     });
 
