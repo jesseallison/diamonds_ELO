@@ -6,10 +6,12 @@
 - [ ] Run on web server at http://emdm.io/diamonds (linked to http://atlab.cct.lsu.edu:8081)
 - [ ] Create interface for poet to be able to choose different pairings
 - [ ] Create new portal for audience to find performance currently running
+- [ ] Update the /data/seeds/xxxx/seed.html files to whatever they need to be to load in the browser properly.
 
 **Soon**
-- [ ] Reformat parsing of corpus into ≈500 line segments
+- [x] Reformat parsing of corpus into ≈500 line segments
 - [ ] Add random selection of corpus segments if not enough return.
+- [ ] Fix up corpii corpus files.  lilghettoqueer-corpus is functional, but the others cause failure.  probs bad syntax
 
 **Later**
 - [ ] Allow poet to load in their own poem and corpus
