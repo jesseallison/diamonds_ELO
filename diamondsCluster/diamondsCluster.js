@@ -35,32 +35,6 @@ var redisPort = process.env.REDISPORT || 6379;
 var redisIP = process.env.REDISIP || "localhost";
 var redisUrl = process.env.REDISURL || 'redis://' + redisIP + ':' + redisPort;
 
-let corpus = "rivergration-corpus";
-let corpii = [{
-  'name': 'horrortech',
-  'redis-name': 'horrortech-corpus',
-  'url': './data/seeds/horrortech/corpus.txt'
-}, {
-  'name': 'lilghettoqueer',
-  'redis-name': 'lilghettoqueer-corpus',
-  'url': './data/seeds/lilghettoqueer/corpus.txt'
-}, {
-  'name': 'melanwormy',
-  'redis-name': 'melanwormy-corpus',
-  'url': './data/seeds/melanwormy/corpus.txt'
-}, {
-  'name': 'mythrimony',
-  'redis-name': 'mythrimony-corpus',
-  'url': './data/seeds/mythrimony/corpus.txt'
-}, {
-  'name': 'orbitopera',
-  'redis-name': 'orbitopera-corpus',
-  'url': './data/seeds/orbitopera/corpus.txt'
-}, {
-  'name': 'rivergration',
-  'redis-name': 'rivergration-corpus',
-  'url': './data/seeds/rivergration/corpus.txt'
-}];
 
 var app = express();
 app.use(express.static(__dirname + '/public'));
@@ -141,6 +115,42 @@ if (cluster.isMaster) {
   // *********************
 
 
+  const defaultSession = 'default';
+  const defaultCorpus = "rivergration-corpus";
+  const corpii = [{
+    'name': 'horrortech',
+    'redis-name': 'horrortech-corpus',
+    'url': './data/seeds/horrortech/corpus.txt'
+  }, {
+    'name': 'lilghettoqueer',
+    'redis-name': 'lilghettoqueer-corpus',
+    'url': './data/seeds/lilghettoqueer/corpus.txt'
+  }, {
+    'name': 'melanwormy',
+    'redis-name': 'melanwormy-corpus',
+    'url': './data/seeds/melanwormy/corpus.txt'
+  }, {
+    'name': 'mythrimony',
+    'redis-name': 'mythrimony-corpus',
+    'url': './data/seeds/mythrimony/corpus.txt'
+  }, {
+    'name': 'orbitopera',
+    'redis-name': 'orbitopera-corpus',
+    'url': './data/seeds/orbitopera/corpus.txt'
+  }, {
+    'name': 'rivergration',
+    'redis-name': 'rivergration-corpus',
+    'url': './data/seeds/rivergration/corpus.txt'
+  }];
+
+  // Make the default Session
+  redisClient.sadd('sessionList', defaultSession);
+  redisClient.hmset(defaultSession + "-session", { 'name': defaultSession, 'corpus': defaultCorpus }, (err, reply) => {
+    console.log(data);
+  });
+  console.log("Session Name Registered: ", defaultSession);
+
+
 
   // Respond to web sockets with socket.on
   io.sockets.on('connection', function(socket) {
@@ -186,7 +196,7 @@ if (cluster.isMaster) {
       socket.userColor = userColor;
       socket.sessionName = data.sessionName || 'default';
       socket.userNote = userNote;
-      socket.corpus = corpus;
+      socket.corpus = defaultCorpus;
       if (data.corpus) {
         socket.corpus = data.corpus
           // .emit to send message back to caller.
@@ -203,7 +213,7 @@ if (cluster.isMaster) {
           // do something with the reply
           socket.corpus = reply;
           if (!reply) {
-            socket.corpus = corpus
+            socket.corpus = defaultCorpus
           }
 
           // .emit to send message back to caller.
@@ -244,12 +254,14 @@ if (cluster.isMaster) {
     });
 
 
-
     socket.on('disconnect', function() {
       // ioClients.remove(socket.id);	// FIXME: Remove client if they leave
       io.sockets.emit('chat', 'SERVER: ' + socket.id + ' has left the building');
     });
 
+    // ****************************************************
+    // ****************************************************
+    // ****  The phrase generation system using set scans in redis to rita markov loadText 
 
 
     socket.on('item', function(data) {
@@ -266,7 +278,7 @@ if (cluster.isMaster) {
         // Now Markov the texts
         // console.log(matchingTexts);
         if (returnedTexts[0]) {
-          console.log("Texts Returned: ", returnedTexts);
+          // console.log("Texts Returned: ", returnedTexts);
           generatedText = markoving(returnedTexts);
         } else {
           console.log("no Texts Returned");
@@ -297,16 +309,7 @@ if (cluster.isMaster) {
               io.to(installationID).emit('itemback', { phrase: generatedText, color: socket.userColor });
             }
           });
-
         }
-
-        // --- diamonds > Sending to the Theatre if connected ----
-        // if(io.sockets.connected[theaterID]!== null) {
-        // 	io.sockets.connected[theaterID].emit('itemback', {
-        // 		phrase: generatedText,
-        // 		color: socket.userColor});
-        // }
-
       });
 
       function sscan(data, callWhenDone) {
@@ -388,7 +391,8 @@ if (cluster.isMaster) {
         // let joinedText = contents.join(' ');
 
         // Combining all lines into one text to markov.
-        console.log("Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]), textsToMarkov[0]);
+        //console.log("Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]), textsToMarkov[0]);
+        console.log("Markov Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]));
         let joinedText = "";
         for (let i = 0; i < textsToMarkov.length; i++) {
           if (Array.isArray(textsToMarkov[i])) {
@@ -421,7 +425,7 @@ if (cluster.isMaster) {
     socket.on('registerSession', function(data) {
       let sessionName = data.name;
       redisClient.sadd('sessionList', data.name);
-      data.corpus = data.corpus || corpus;
+      data.corpus = data.corpus || defaultCorpus;
 
       // possible data {name, corpus, date, text, filename}
       redisClient.hmset(sessionName + "-session", data, (err, reply) => {
@@ -451,8 +455,8 @@ if (cluster.isMaster) {
         if (reply) {
           socket.corpus = reply;
         } else {
-          socket.corpus = corpus;
-          data.corpus = corpus;
+          socket.corpus = defaultCorpus;
+          data.corpus = defaultCorpus;
           redisClient.hmset(sessionName + "-session", data, (err, reply) => {
             console.log(data);
             redisClient.expire(sessionName + '-session', 3600);
