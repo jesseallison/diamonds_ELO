@@ -37,3 +37,24 @@ Start the application
 npm install
 npm start
 ```
+
+npm run-script corpus-prep
+
+__Miscellaneous Docker__
+docker container list
+
+
+
+## Corpii
+
+"horrortech" corpus recombines text from the screenplays of Halloween and Jacob's Ladder combined with President Obama's May 23, 2013 speech on national security and drone warfare
+
+"lilghettoqueer" corpus recombines text from Robert Cortes Holliday's Turns About Town and W. E. B. Du Bois' The Souls of Black Folk
+
+"melanwormy" corpus recombines text from Bram Stoker's The Lair of the White Worm (The Garden of Evil) and the International Helminth Genomes Consortium's "Comparative Genomics of the Major Parasitic Worms," and various articles from psychology publications on depression and anti-depressants 
+
+"mythrimony" corpus recombines text from popular wedding vows, Biblical verses related to marriage, and Charles Gould's Mythical Monsters
+
+"orbitopera" corpus recombines text from the Challenger's operational recorder, transcripts from the Apollo 11 moonwalk, and English translations of lyrics from a wide array of operas 
+
+"rivergration" corpus recombines text from John McPhee's The Control of Nature, articles on the U.S. Army Corps of Engineers and the national levee system, the U.S. Constitution, and recent U.S. Immigration and Customs Enforcement reports and briefings
