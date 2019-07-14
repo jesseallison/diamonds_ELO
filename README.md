@@ -24,7 +24,7 @@
 - [x] Reformat parsing of corpus into ≈500 line segments
 - [x] Run on web server at http://dystopia.emdm.io (linked to http://atlab.cct.lsu.edu:8001)
 
-## To Start Using Docker Compose
+## To Start with Docker Compose
 
 ```bash
 npm install

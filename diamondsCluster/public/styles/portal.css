@@ -8,9 +8,12 @@ body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: grid;
   grid-template-columns: 1fr 4fr;
-  /* justify-items: center; */
   margin-top: 1vw;
   margin-left: 1vw;
+}
+
+a {
+  text-decoration: none;
 }
 
 main {
@@ -23,30 +26,40 @@ header img {
 }
 
 h1 {
-  font-weight: normal;
-  font-size: calc(16px + 5vw);
-  /* font-size: 5vw; */
+  font-weight: bold;
   text-decoration: underline;
 }
 
-nav ul {
-  margin-left: 3vw;
-  list-style-type: none;
+nav h1,li {
+  font-size: calc(16px + 6.5vmax);
 }
 
 nav li {
-  font-size: calc(16px + 5vw);
-}
-
-nav a {
-  text-decoration: none;
+  list-style-type: none;
+  padding-left: 4vw;
 }
 
 nav li:hover {
-  list-style-image: url('/images/fire.png');
+	background-image: url("/images/fire.png");
+	background-repeat: no-repeat;
+	background-position: left;
+	background-size: 4vw;
 }
 
-header {
+h2 {
+  font-weight: bold;
+  text-decoration-line: underline;
+  /* text-shadow: 0 3px 6px; */
+  font-size: calc(10px + 3.5vmax);
+}
 
+@media screen and (min-width: 1440px) {
+  nav h1,li  {
+     font-size: 110px;
+  }
+
+  h2 {
+    font-size: 60px;
+ }
 }
 
