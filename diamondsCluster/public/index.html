@@ -222,9 +222,12 @@
         let sessionName = document.forms["poet-form"]["session-name"].value;
         console.log("Session Name: ", sessionName);
         socket.emit('registerSession', {
-          'name': sessionName
+          'name': sessionName,
+          'corpus': 'horrortech',
+          'date': Date.now()
         });
         localStorage.setItem("sessionName", sessionName);
+        user.sessionName = sessionName;
         return false;
       };
 
@@ -236,6 +239,7 @@
           'user': user.socketID
         });
         localStorage.setItem("sessionName", sessionName);
+        user.sessionName = sessionName;
         return false;
       };
 
@@ -256,6 +260,9 @@
         console.log("chat: " + data.greeting);
         user.socketID = data.socketID;
         localStorage.setItem("socketID", data.socketID);
+        if (data.corpus) {
+          user.corpus = data.corpus;
+        }
       });
 
       socket.on('setSection', function(data) {

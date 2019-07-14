@@ -184,14 +184,39 @@ if (cluster.isMaster) {
       // Can add any other pertinent details to the socket to be retrieved later
       socket.userLocation = userLocation;
       socket.userColor = userColor;
+      socket.sessionName = data.sessionName || 'default';
       socket.userNote = userNote;
-      // .emit to send message back to caller.
-      socket.emit('chat', {
-        'greeting': `SERVER: You have connected. Hello: ${username} ID: ${socket.id} Color: ${socket.userColor}`,
-        'name': username,
-        'socketID': socket.id,
-        'color': socket.userColor
-      });
+      if (data.corpus) {
+        socket.corpus = data.corpus
+          // .emit to send message back to caller.
+        socket.emit('chat', {
+          'greeting': `SERVER: You have connected. Hello: ${username} ID: ${socket.id} Color: ${socket.userColor}`,
+          'name': username,
+          'socketID': socket.id,
+          'sessionName': socket.sessionName,
+          'corpus': socket.corpus,
+          'color': socket.userColor
+        });
+      } else {
+        redisClient.hget(socket.sessionName + "-session", 'corpus', (err, reply) => {
+          // do something with the reply
+          socket.corpus = reply;
+          if (!reply) {
+            socket.corpus = corpus
+          }
+
+          // .emit to send message back to caller.
+          socket.emit('chat', {
+            'greeting': `SERVER: You have connected. Hello: ${username} ID: ${socket.id} Color: ${socket.userColor}`,
+            'name': username,
+            'socketID': socket.id,
+            'sessionName': socket.sessionName,
+            'corpus': socket.corpus,
+            'color': socket.userColor
+          });
+        })
+      }
+
       // .broadcast to send message to all sockets.
       //socket.broadcast.emit('chat', 'SERVER: A new user has connected: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
 
@@ -228,7 +253,8 @@ if (cluster.isMaster) {
 
     socket.on('item', function(data) {
       // --- Someone selected 'item', search for ted Talks that use the word, then markov them. --- //
-      console.log(socket.id + " tapped item: " + data);
+      console.log(socket.id + " tapped item: " + data.text);
+      let sessionName = data.sessionName;
 
       var matchingTexts = [];
       var cursor = '0';
@@ -277,10 +303,12 @@ if (cluster.isMaster) {
       });
 
       function sscan(data, callWhenDone) {
+        console.log("Corpus: ", socket.corpus);
+
         redisClient.sscan(
-          corpus,
+          socket.corpus,
           cursor,
-          'MATCH', '*' + data + '*',
+          'MATCH', '*' + data.text + '*',
           'COUNT', '10', // Find 10 occurances of the word that was tapped in the CORPUS.
           function(err, res) {
             if (err) throw err;
@@ -326,7 +354,7 @@ if (cluster.isMaster) {
               console.log('--- Iteration complete, matches below ---');
               if (matchingTexts.length < 10) {
                 // Add random texts.
-                let texts = redisClient.srandmember(corpus, (10 - matchingTexts.length), function(err, reply) {
+                let texts = redisClient.srandmember(socket.corpus, (10 - matchingTexts.length), function(err, reply) {
                   if (err) throw err;
                   // console.log("Texts to add: ", JSON.stringify(reply[1]));
                   matchingTexts.push(reply[1]);
@@ -386,8 +414,18 @@ if (cluster.isMaster) {
     socket.on('registerSession', function(data) {
       let sessionName = data.name;
       redisClient.sadd('sessionList', data.name);
+      data.corpus = data.corpus || corpus;
+
+      // possible data {name, corpus, date, text, filename}
+      redisClient.hmset(sessionName + "-session", data, (err, reply) => {
+        console.log(data);
+      });
       console.log("Session Name Registered: ", sessionName);
       updateSessions();
+
+      redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
+        // do something with the reply
+      })
     });
 
     socket.on('joinSession', function(data) {
@@ -397,6 +435,11 @@ if (cluster.isMaster) {
           redisClient.sadd('sessionList', sessionName);
         })
         // Do I save this for use in the audience page to come?
+      socket.sessionName = sessionName;
+      redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
+        // do something with the reply
+        socket.corpus = reply;
+      })
     });
 
     function updateSessions() {

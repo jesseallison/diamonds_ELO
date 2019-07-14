@@ -80,6 +80,11 @@
 
       // $(".welcomeText").autoshrink();
 
+      let user = {
+        'name': 'a_user',
+        'id': 1000
+      }
+      user.sessionName = localStorage.getItem('sessionName') || 'default';
 
       var colors = new Array(
         [62, 35, 255], [60, 255, 60], [255, 35, 98], [45, 175, 230], [255, 0, 255], [255, 128, 0]);
@@ -173,7 +178,10 @@
           $(e.target)[0].style.backgroundColor = myColor;
           // console.log($(e.target)[0]);
           dSound.speak(text);
-          socket.emit('item', text);
+          socket.emit('item', {
+            'text': text,
+            'sessionName': user.sessionName
+          });
         }
       });
 
@@ -247,6 +255,7 @@
         // causeSound.triggerCauseway();
         socket.emit('addme', {
           name: "a_user",
+          sessionName: user.sessionName,
           color: myColor
         });
         // document.getElementsByClassName("sd")[0].style.display = 'none';
@@ -258,6 +267,9 @@
 
       socket.on('chat', function(data) {
         console.log("chat: " + data);
+        if (data.corpus) {
+          user.corpus = data.corpus;
+        }
       });
 
       socket.on('setSection', function(data) {
