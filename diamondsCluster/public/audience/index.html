@@ -7,7 +7,7 @@
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
 
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="/styles/main.css">
 
   <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
 
@@ -178,6 +178,63 @@
       });
 
 
+      // function scrollto(element){
+      // 	var ele = document.getElementsByClassName("s"+element)[0];
+      //     if (ele) {
+      //     	window.scrollTo(0, ele.offsetTop);
+      //     }
+      // }
+
+      // function clickgo() {
+      // 	var elements = document.getElementsByClassName(this.className);
+      // 	socket.emit('item', elements[0].className.split(" ")[1]);
+      // 	elements[0].className += " clicked";
+      // 	elements[0].style.backgroundColor = myColor;
+      // }
+
+      window.onload = function() {
+        registerWithServer();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/data/score.txt', true);
+        xhr.onreadystatechange = function() {
+          if (this.readyState !== 4) return;
+          if (this.status !== 200) return;
+          var scoreText = document.getElementsByClassName("scoreText")[0];
+          scoreText.innerHTML = this.responseText;
+          // $(".scoreText").textfill();
+          actOnText();
+          document.getElementsByClassName("scoreText")[0].style.borderLeft = "15px solid " + myColor;
+
+          // .style.display = 'block'
+          // addEvents();
+        };
+        xhr.send();
+
+        // function addEvents() {
+        // 	var phrases = document.getElementsByClassName('phrase');
+        // 	for (var i = 0; i < phrases.length; i++) {
+        // 		phrases[i].addEventListener("click", clickgo, false);
+        // 	}
+        // }
+
+      };
+
+      $(window).resize(function() {
+        // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + myColor;
+        // console.log("resized");
+      });
+
+      function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+
+
       // **********************************************************
       // **********************************************************
       // Nexus Stuff
@@ -224,12 +281,9 @@
 
       });
 
-      // function scrollto(element){
-      // 	var ele = document.getElementsByClassName("s"+element)[0];
-      //     if (ele) {
-      //     	window.scrollTo(0, ele.offsetTop);
-      //     }
-      // }
+
+
+      // Add Chords, Progression, feedback, comb filtering, shimmer!
 
       socket.on('itemback', function(data) {
         console.log("itemback:", data.phrase);
@@ -237,13 +291,6 @@
         elements.innerHTML = data.phrase;
         // elements[0].className += " clicked";
       });
-
-      // function clickgo() {
-      // 	var elements = document.getElementsByClassName(this.className);
-      // 	socket.emit('item', elements[0].className.split(" ")[1]);
-      // 	elements[0].className += " clicked";
-      // 	elements[0].style.backgroundColor = myColor;
-      // }
 
 
       socket.on('audienceEnable', function(data) {
@@ -281,56 +328,13 @@
 
 
 
-      window.onload = function() {
-        registerWithServer();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'data/score.txt', true);
-        xhr.onreadystatechange = function() {
-          if (this.readyState !== 4) return;
-          if (this.status !== 200) return;
-          var scoreText = document.getElementsByClassName("scoreText")[0];
-          scoreText.innerHTML = this.responseText;
-          // $(".scoreText").textfill();
-          actOnText();
-          document.getElementsByClassName("scoreText")[0].style.borderLeft = "15px solid " + myColor;
-
-          // .style.display = 'block'
-          // addEvents();
-        };
-        xhr.send();
-
-        // function addEvents() {
-        // 	var phrases = document.getElementsByClassName('phrase');
-        // 	for (var i = 0; i < phrases.length; i++) {
-        // 		phrases[i].addEventListener("click", clickgo, false);
-        // 	}
-        // }
-
-      };
-
-      $(window).resize(function() {
-        // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + myColor;
-        // console.log("resized");
-      });
-
-      function getRandomColor() {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-      }
-
-
-      // Add Chords, Progression, feedback, comb filtering, shimmer!
 
       var self = this;
 
       var speakVoice = 'en/en';
-      meSpeak.loadConfig("js/mespeak/mespeak_config.json");
+      meSpeak.loadConfig("/js/mespeak/mespeak_config.json");
       //meSpeak.loadVoice('js/mespeak/voices/en/en-us.json');
-      meSpeak.loadVoice('js/mespeak/voices/' + speakVoice + '.json');
+      meSpeak.loadVoice('/js/mespeak/voices/' + speakVoice + '.json');
       //meSpeak.speak('hello world',{},toneSetup());
 
 
