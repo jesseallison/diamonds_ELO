@@ -35,7 +35,7 @@ var redisPort = process.env.REDISPORT || 6379;
 var redisIP = process.env.REDISIP || "localhost";
 var redisUrl = process.env.REDISURL || 'redis://' + redisIP + ':' + redisPort;
 
-let corpus = "lilghettoqueer-corpus";
+let corpus = "rivergration-corpus";
 let corpii = [{
   'name': 'horrortech',
   'redis-name': 'horrortech-corpus',
@@ -186,6 +186,7 @@ if (cluster.isMaster) {
       socket.userColor = userColor;
       socket.sessionName = data.sessionName || 'default';
       socket.userNote = userNote;
+      socket.corpus = corpus;
       if (data.corpus) {
         socket.corpus = data.corpus
           // .emit to send message back to caller.
@@ -261,10 +262,16 @@ if (cluster.isMaster) {
 
       var diamondsCorpus = sscan(data, function(returnedTexts) {
         // console.log("*** Texts Returned ***\n", returnedTexts);
-
+        let generatedText;
         // Now Markov the texts
         // console.log(matchingTexts);
-        var generatedText = markoving(returnedTexts);
+        if (returnedTexts[0]) {
+          console.log("Texts Returned: ", returnedTexts);
+          generatedText = markoving(returnedTexts);
+        } else {
+          console.log("no Texts Returned");
+        }
+
         console.log("*** Generated Text ***\n", generatedText);
         // Save generated sentances into redis.
         if (generatedText) {
