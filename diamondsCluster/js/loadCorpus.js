@@ -30,7 +30,6 @@ let dataSet = "./data/lilghettoqueerCORPUS.txt";
 let linesInEachDivision = 200;
 let textInDivision = [];
 
-
 // list name for storing as a list
 // let listName = "items";
 // clear the list (if using a list)
@@ -73,8 +72,7 @@ function handleDivision(data) {
 
 }
 
-// remove line breaks and other escaped formatting
-// sanitization
+// remove line breaks and other escaped formatting (sanitization)
 function escape(key, val) {
     if (typeof (val) != "string") {
         return val;
