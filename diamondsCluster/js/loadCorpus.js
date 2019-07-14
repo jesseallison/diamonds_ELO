@@ -89,7 +89,7 @@ function loadCorpii() {
     client.quit();
   }
   let corpus = corpii.pop();
-  textName = corpus.name;
+  textName = corpus.name + "-corpus";
   fs.createReadStream(corpus.url).pipe(split()).on('data', handleRow).on('end', handleEnd);
 };
 
@@ -115,7 +115,7 @@ function handleDivision(data) {
   let jsonString = JSON.stringify(data, escape);
   client.sadd(textName, jsonString);
   //console.log(linesInEachDivision, " Lines: ", jsonString);
-  console.log(linesInEachDivision, " Lines");
+  //console.log(linesInEachDivision, " Lines");
 }
 
 // remove line breaks and other escaped formatting
