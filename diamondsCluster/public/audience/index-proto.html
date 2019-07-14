@@ -86,6 +86,8 @@
       }
       user.sessionName = localStorage.getItem('sessionName') || 'default';
 
+      let generatedTexts = [];
+
       var colors = new Array(
         [62, 35, 255], [60, 255, 60], [255, 35, 98], [45, 175, 230], [255, 0, 255], [255, 128, 0]);
 
@@ -167,7 +169,7 @@
 
       }
 
-      $('.scoreText').click(function (e) {
+      $('.scoreText').click(function(e) {
         target = event.target || event.srcElement;
 
         if (target.nodeName.toLowerCase() === "span") {
@@ -200,11 +202,11 @@
       // 	elements[0].style.backgroundColor = myColor;
       // }
 
-      window.onload = function () {
+      window.onload = function() {
         registerWithServer();
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/data/score.txt', true);
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
           if (this.readyState !== 4) return;
           if (this.status !== 200) return;
           var scoreText = document.getElementsByClassName("scoreText")[0];
@@ -227,7 +229,7 @@
 
       };
 
-      $(window).resize(function () {
+      $(window).resize(function() {
         // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + myColor;
         // console.log("resized");
       });
@@ -265,76 +267,94 @@
       // **********************************************************
       // Only for the Overlay/intro page
 
-      socket.on('chat', function (data) {
+      socket.on('chat', function(data) {
         console.log("chat: " + data);
         if (data.corpus) {
           user.corpus = data.corpus;
         }
       });
 
-      socket.on('setSection', function (data) {
+      socket.on('setSection', function(data) {
         // console.log(data);
         console.log("the section is now: " + data.title);
-
-        // if (data.sect == "15") {
-        // 	Tone.startMobile();
-        // 	causeSound.playBrought();
-        // }
-
-        // if(data.title !== undefined){
-        // 	var otherClasses = document.querySelectorAll('.sec');
-
-        // 	for (var i = 0; i < otherClasses.length; i++) {
-        // 	    otherClasses[i].style.display = 'none';
-        // 	}
-
-        // 	document.getElementsByClassName("s"+data.sect)[0].style.display = 'block';
-        // }
-
       });
 
 
 
       // Add Chords, Progression, feedback, comb filtering, shimmer!
 
-      socket.on('itemback', function (data) {
+      socket.on('itemback', function(data) {
         console.log("itemback:", data.phrase);
         var elements = document.getElementsByClassName("gentext")[0];
         elements.innerHTML = data.phrase;
+        generatedTexts.push(data.phrase);
         // elements[0].className += " clicked";
       });
 
 
-      socket.on('audienceEnable', function (data) {
+      socket.on('audienceEnable', function(data) {
         console.log('enabled? ', data);
         dSound.audienceEnable(data);
       });
 
-      socket.on('playChord', function (data) {
+
+      socket.on('start', function(data) {
+        console.log("Start: ", data);
+        dSound.speak("So it begins...");
+      });
+
+      socket.on('excite', function(data) {
+        if (generatedTexts.length > 0) {
+          dSound.speak(generatedTexts[generatedTexts.length - 1]);
+        }
+      });
+
+      socket.on('echo', function(data) {
+        console.log("Echo: ", data.phrase);
+        dSound.speak(data.phrase);
+      });
+
+      socket.on('kill', function(data) {
+        console.log("Kill: ", data);
+        dSound.speak('die');
+      });
+
+      socket.on('volta', function(data) {
+        console.log("Volta: ", data);
+        dSound.speak('Umm, volta, yeah.');
+      });
+
+      socket.on('end', function(data) {
+        console.log("End: ", data);
+        dSound.speak('Thank you.');
+      });
+
+
+      socket.on('playChord', function(data) {
         dSound.playChord(data.notes, data.duration);
       });
 
-      socket.on('sustainChord', function (data) {
+      socket.on('sustainChord', function(data) {
         dSound.playChord(data.notes, data.duration);
       });
 
-      socket.on('triggerBeginning', function (data) {
+      socket.on('triggerBeginning', function(data) {
         dSound.playKepler();
       });
 
-      socket.on('nextChord', function (data) {
+      socket.on('nextChord', function(data) {
         dSound.nextChord();
       });
 
-      socket.on('triggerUtopalypse', function (data) {
+      socket.on('triggerUtopalypse', function(data) {
         dSound.playUtopalypse();
       });
 
-      socket.on('triggerDiamonds', function (data) {
+      socket.on('triggerDiamonds', function(data) {
         dSound.playDiamonds();
       });
 
-      socket.on('triggerEnding', function (data) {
+      socket.on('triggerEnding', function(data) {
         dSound.playEnding();
       });
 
