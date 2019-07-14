@@ -33,14 +33,16 @@
           Name your poetry session.
           <input type="text" name="session-name">
           <input type="submit">
-        </form>
+        </form><button class="myButton" onclick="window.location.href='/poet'">Poet Interface</button>
         <form name="audience-form" onsubmit="return registerAudience()">
           Join a poetry session.
           <input type="text" name="session-name">
           <input type="submit">
-        </form>
+        </form><button class="myButton" onclick="window.location.href='/audience'">Audience</button>
       </div>
-      <p><button onclick="getSessions()">Get Session List</button></p>
+      <p><button class="myButton" onclick="getSessions()">Get Session List</button></p>
+      <p><a class="myButton" href="/theater">Theater</a></p>
+      <p><a class="myButton" href='http://diamonds.emdm.io'>Curious</a></p>
       <p><a href="#" class="myButton" onclick="Tone.startMobile(); document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block'; document.getElementsByClassName('gentext')[0].style.display = 'block'; document.getElementsByClassName('beforeGentext')[0].style.display = 'block';">Start</a></p>
       <p><em>Tapping is the new snapping!</em></p>
     </div>
