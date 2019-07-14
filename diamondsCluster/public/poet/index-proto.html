@@ -14,12 +14,12 @@
 
 <body>
   <div class="buttons">
-    <button onclick="socket.emit('triggerBeginning')">Start</button>
-    <button onclick="socket.emit('triggerExcite')">Excite</button>
-    <button onclick="socket.emit('triggerEcho')">Echo</button>
-    <button onclick="socket.emit('triggerKill')">Kill</button>
-    <button onclick="socket.emit('triggerVolta')">Volta</button>
-    <button onclick="socket.emit('triggerEnd')">End</button>
+    <button onclick="socket.emit('start')">Start</button>
+    <button onclick="socket.emit('excite')">Excite</button>
+    <button onclick="echo()">Echo</button>
+    <button onclick="socket.emit('kill')">Kill</button>
+    <button onclick="socket.emit('volta')">Volta</button>
+    <button onclick="socket.emit('end')">End</button>
   </div>
   <div class="generatedText stuff"></div>
   <div class="gentextbuttons">
@@ -34,9 +34,12 @@
   <script type="text/javascript">
     let user = {
       'name': 'a_user',
-      'id': 1000
+      'id': 1000,
+      'color': getRandomColor()
     }
     user.sessionName = localStorage.getItem('sessionName') || 'default';
+    // let myColor = getRandomColor();
+    // let myLocation = [0.5, 0.5]; // Default centered
 
     // var socket = io.connect('130.39.92.112:8000/');
     var socket = io.connect(window.location.origin, {
@@ -49,21 +52,47 @@
     var pACount = 0;
     var pALimit = 10;
 
-    socket.emit('addme', {
-      name: "controller"
-    });
+
+    function registerWithServer() {
+      socket.emit('addme', {
+        name: "controller",
+        sessionName: user.sessionName,
+        corpus: user.corpus,
+        color: user.color
+      });
+    }
+    registerWithServer();
+
+    // **********************************************************
+    // Only for the Overlay/intro page
 
     socket.on('chat', function(data) {
-      console.log(data);
+      console.log("chat: " + data);
+      if (data.corpus) {
+        user.corpus = data.corpus;
+      }
     });
 
     socket.on('setSection', function(data) {
       console.log("The section is now: " + data.title);
     });
 
+    function echo() {
+      if (generatedTexts.length > 0) {
+        socket.emit('echo', {
+          "phrase": currentPhrase
+        });
+      }
+    };
+
+
+
+
+
+
     function nexPhraseClick() {
-      document.getElementsByClassName('generatedText')[0].innerHTML = pArray[pACount];
       currentPhrase = pArray[pACount];
+      document.getElementsByClassName('generatedText')[0].innerHTML = currentPhrase;
 
       console.log("pACount", pACount);
       if (pACount < pArray.length) {
@@ -84,6 +113,7 @@
         pArray.pop();
         console.log("else", pArray.length);
       }
+      generatedTexts.push(data.phrase); // Keeping track of all phrases received.
       // pArray[pACount] = data.phrase;
 
       // currentPhrase = data.phrase;
@@ -170,6 +200,15 @@
     // 	}
 
     // };
+
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
   </script>
 
 </body>

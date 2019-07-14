@@ -86,6 +86,8 @@
       }
       user.sessionName = localStorage.getItem('sessionName') || 'default';
 
+      let generatedTexts = [];
+
       var colors = new Array(
         [62, 35, 255], [60, 255, 60], [255, 35, 98], [45, 175, 230], [255, 0, 255], [255, 128, 0]);
 
@@ -275,22 +277,6 @@
       socket.on('setSection', function(data) {
         // console.log(data);
         console.log("the section is now: " + data.title);
-
-        // if (data.sect == "15") {
-        // 	Tone.startMobile();
-        // 	causeSound.playBrought();
-        // }
-
-        // if(data.title !== undefined){
-        // 	var otherClasses = document.querySelectorAll('.sec');
-
-        // 	for (var i = 0; i < otherClasses.length; i++) {
-        // 	    otherClasses[i].style.display = 'none';
-        // 	}
-
-        // 	document.getElementsByClassName("s"+data.sect)[0].style.display = 'block';
-        // }
-
       });
 
 
@@ -301,6 +287,7 @@
         console.log("itemback:", data.phrase);
         var elements = document.getElementsByClassName("gentext")[0];
         elements.innerHTML = data.phrase;
+        generatedTexts.push(data.phrase);
         // elements[0].className += " clicked";
       });
 
@@ -309,6 +296,39 @@
         console.log('enabled? ', data);
         dSound.audienceEnable(data);
       });
+
+
+      socket.on('start', function(data) {
+        console.log("Start: ", data);
+        dSound.speak("So it begins...");
+      });
+
+      socket.on('excite', function(data) {
+        if (generatedTexts.length > 0) {
+          dSound.speak(generatedTexts[generatedTexts.length - 1]);
+        }
+      });
+
+      socket.on('echo', function(data) {
+        console.log("Echo: ", data.phrase);
+        dSound.speak(data.phrase);
+      });
+
+      socket.on('kill', function(data) {
+        console.log("Kill: ", data);
+        dSound.speak('die');
+      });
+
+      socket.on('volta', function(data) {
+        console.log("Volta: ", data);
+        dSound.speak('Umm, volta, yeah.');
+      });
+
+      socket.on('end', function(data) {
+        console.log("End: ", data);
+        dSound.speak('Thank you.');
+      });
+
 
       socket.on('playChord', function(data) {
         dSound.playChord(data.notes, data.duration);

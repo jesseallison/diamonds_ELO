@@ -469,6 +469,43 @@ if (cluster.isMaster) {
       });
     });
 
+    socket.on('start', function(data) {
+      console.log("start: ", data);
+      socket.broadcast.emit('start', data);
+    });
+
+    socket.on('excite', function(data) {
+      console.log("excite: ", data);
+      socket.broadcast.emit('excite', data);
+    });
+
+    socket.on('echo', function(data) {
+      console.log("echo: ", data.phrase);
+      socket.broadcast.emit('echo', data);
+    });
+
+    socket.on('kill', function(data) {
+      console.log("kill: ", data);
+      socket.broadcast.emit('kill', data);
+    });
+
+    socket.on('volta', function(data) {
+      console.log("volta: ", data);
+      socket.broadcast.emit('volta', data);
+    });
+
+    socket.on('end', function(data) {
+      console.log("end: ", data);
+      socket.broadcast.emit('end', data);
+    });
+
+
+
+
+
+
+
+
 
 
 
