@@ -5,6 +5,7 @@
 }
 
 body {
+  font-size: calc(10px + 0.5vw);
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: grid;
   grid-template-columns: 2fr 1fr 6fr 1fr;
@@ -88,7 +89,7 @@ input[type=submit] {
   display:block;
   margin:10px auto;
   width: 100%;
-  font-size: 1.25vw;
+  font-size: calc(10px + 1vw);
   padding:15px 1.2em;
   border-radius:2px;
   text-decoration:none;
@@ -127,7 +128,7 @@ a.button {
   text-decoration:none;
   font-weight: bold;
   color:#fff;
-  font-size: 1.25vw;
+  font-size: calc(10px + 1vw);
   text-align:center;
 }
 
@@ -160,6 +161,6 @@ h3 {
 }
 
 #session-list>ul>li {
-  font-size: 1.5vw;
+  font-size: calc(10px + 1vw);
   list-style-type: none;
 }

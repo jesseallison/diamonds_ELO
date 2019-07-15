@@ -3,32 +3,49 @@
 ## TODO
 
 **Now**
-- [ ] Create new portal for audience to find performance currently running
-- [ ] Update the /data/seeds/xxxx/seed.html files to whatever they need to be to load in the browser properly.
-  - The main index page allows users to set a sessionName this is stored on the server as well as in localStorage.  On any subsequent page on this domain you can get this sessionName via:  localStorage.getItem('sessionName')
-- [ ] send jesse pages as they're done 
+- [ ] Add session chooser to "I am theater" link from portal
+- [ ] simplify the sesssion chooser
+- [ ] update the poet controller UI
 
 **Soon**
+- [ ] Allow poet to load in their own poem and corpus
 - [ ] Add random selection of corpus segments if not enough return.
-- [ ] Fix up corpii corpus files.  lilghettoqueer-corpus is functional, but the others cause failure.  probs bad syntax
 - [ ] why does loadtext-ish take so long
 
 **Later**
-- [ ] Allow poet to load in their own poem and corpus
-- [ ] Create interface for poet to be able to choose different pairings
+- [ ] Create interface for poet to be able to choose different pairings from seeds and corpora
+- [ ] use socet.io rooms/groups to tie session user together
 
 **Maybe**
 - [ ] Replace markov with machine learning
 
 **Done**
+- [x] Fix up corpii corpus files.  lilghettoqueer-corpus is functional, but the others cause failure.  probs bad syntax
+- [x] Create new portal for audience to find performance currently running
+- [x] Update the /data/seeds/xxxx/seed.html files to whatever they need to be to load in the browser properly.
+  - The main index page allows users to set a sessionName this is stored on the server as well as in localStorage.  On any subsequent page on this domain you can get this sessionName via:  localStorage.getItem('sessionName')
 - [x] Reformat parsing of corpus into ≈500 line segments
 - [x] Run on web server at http://dystopia.emdm.io (linked to http://atlab.cct.lsu.edu:8001)
 
-## To Start with Docker Compose
+## Start with Docker Compose)
 
 ```bash
 npm install
 docker-compose up
+```
+
+### For Production Use
+
+```bash
+npm install
+docker-compose up -d
+```
+
+and the follwoing to check in your code
+
+```bash
+docker-compose ps
+docker-compose logs -f
 ```
  
 ## To Start Manually
@@ -45,12 +62,12 @@ npm install
 npm start
 ```
 
-npm run-script corpus-prep
+`npm run-script corpus-prep`
 
-__Miscellaneous Docker__
-docker container list
-
-
+## Miscellaneous Docker Commands
+`docker container ls`
+`docker stop <container-name>`
+`docker system prune`
 
 ## Corpii
 

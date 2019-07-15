@@ -26,6 +26,10 @@
   <div class="theuserbars"></div>
 
   <script>
+
+    var sessionName = localStorage.getItem('sessionName') || 'default';
+    console.log("session is:", sessionName);
+
     // function getRandomColor() {
     // 	var letters = '0123456789ABCDEF'.split('');
     // 	var color = '#';
@@ -47,8 +51,8 @@
       name: "theater"
     });
 
-    socket.on('chat', function(data) {
-      console.log(data);
+    socket.on('chat', function (data) {
+      console.log("chat: ", data);
       // document.getElementById("causeway-text").innerHTML= data;
 
     });
@@ -91,11 +95,11 @@
     // }
     var newDivBar;
     var w1 = 10;
-    socket.on('itemback', function(data) {
+    socket.on('itemback', function (data) {
 
       if (userbars[data.color] > 0) {
         userbars[data.color] = userbars[data.color] + 1
-          // w1+=1;
+        // w1+=1;
         console.log(userbars[data.color]);
         newDivBar.style.width = userbars[data.color] + "px";
       };
@@ -166,7 +170,7 @@
       // // }
     });
 
-    socket.on('selectedPhrase', function(data) {
+    socket.on('selectedPhrase', function (data) {
       console.log("New Phrase: " + data.phrase);
       document.getElementsByClassName('newgentext')[0].innerHTML = data.phrase;
       var newgentext = document.getElementsByClassName('newgentext')[0];
@@ -208,7 +212,7 @@
       // }
     });
 
-    socket.on('setSection', function(data) {
+    socket.on('setSection', function (data) {
       console.log("the section is now: " + data.sect + ":" + data.title);
 
     });
@@ -216,27 +220,27 @@
     // ****** Things you can respond to
 
 
-    socket.on('start', function(data) {
+    socket.on('start', function (data) {
       console.log("Start: ", data);
     });
 
-    socket.on('excite', function(data) {
+    socket.on('excite', function (data) {
       console.log("Excite: ", data);
     });
 
-    socket.on('echo', function(data) {
+    socket.on('echo', function (data) {
       console.log("Echo: ", data.phrase);
     });
 
-    socket.on('kill', function(data) {
+    socket.on('kill', function (data) {
       console.log("Kill: ", data);
     });
 
-    socket.on('volta', function(data) {
+    socket.on('volta', function (data) {
       console.log("Volta: ", data);
     });
 
-    socket.on('end', function(data) {
+    socket.on('end', function (data) {
       console.log("End: ", data);
     });
 
@@ -290,8 +294,8 @@
   </script>
 
   <video autoplay muted loop id="bgvid">
-	    <source src="../data/therm.mp4" type="video/mp4">
-	</video>
+    <source src="../data/therm.mp4" type="video/mp4">
+  </video>
 
 </body>
 
