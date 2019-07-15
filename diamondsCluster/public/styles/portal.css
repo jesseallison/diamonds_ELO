@@ -7,7 +7,7 @@
 body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 2fr 1fr 6fr 1fr;
   margin-top: 1vw;
   margin-left: 1vw;
 }
@@ -51,6 +51,14 @@ h2 {
   text-decoration-line: underline;
   /* text-shadow: 0 3px 6px; */
   font-size: calc(10px + 3.5vmax);
+}
+
+input[type=text] {
+  /* border: 1px solid #707070; */
+  padding: 10px;
+  width: 100%;
+  font-size: 3.5vw;
+  /* border-radius: 0; */
 }
 
 @media screen and (min-width: 1440px) {

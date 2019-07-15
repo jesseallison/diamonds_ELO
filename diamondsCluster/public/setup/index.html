@@ -12,11 +12,19 @@
 <body>
   <header><a href="/index.html"><img src="/images/logo_side.png"></a></header>
   <main>
+    <form>
+      <input id="input_val" type="text" name="firstname">
+    </form>
     <h2>Pairings</h2>
     <h2>Load your own</h2>
     <h2>Ready to perform?</h2>
     <h2>Descriptions</h2>
   </main>
+  <script src="/js/namesgenerator.js"></script>
+  <script>
+    console.log(unique_name);
+    document.getElementById("input_val").value = unique_name;
+  </script>
 </body>
 
 </html>
