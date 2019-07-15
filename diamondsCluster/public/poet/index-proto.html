@@ -151,7 +151,9 @@
       // scrollto(section);
       // var num = section.split("s")[1];
       console.log("curr:", currentPhrase);
-      socket.emit("selectedPhrase", currentPhrase);
+      socket.emit("selectedPhrase", {
+        'phrase': currentPhrase
+      });
     }
 
     window.onload = function() {

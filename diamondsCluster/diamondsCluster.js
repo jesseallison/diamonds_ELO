@@ -263,9 +263,11 @@ if (cluster.isMaster) {
     // ****************************************************
     // ****  The phrase generation system using set scans in redis to rita markov loadText 
 
-
     socket.on('item', function(data) {
-      // --- Someone selected 'item', search for ted Talks that use the word, then markov them. --- //
+      // --- Someone selected 'item', search for texts that use the word, then markov them. --- //
+      // sscan for texts, recursively filling up a matching text array. If it doesn't find 10
+      // texts are randomly chosen and passed to the callback function. These are passed to 
+      // the markoving method for random generation of text. 
       console.log(socket.id + " tapped item: " + data.text);
       let sessionName = data.sessionName;
 
@@ -363,7 +365,7 @@ if (cluster.isMaster) {
             if (cursor === '0') {
               console.log('--- Iteration complete, matches below ---');
               if (matchingTexts.length < 10) {
-                // Add random texts.
+                // Not enough, add random texts.
                 let texts = redisClient.srandmember(socket.corpus, (10 - matchingTexts.length), function(err, reply) {
                   if (err) throw err;
                   // console.log("Texts to add: ", JSON.stringify(reply[1]));
@@ -382,17 +384,9 @@ if (cluster.isMaster) {
 
       function markoving(textsToMarkov) {
 
-        // Extracting the content from the text and making one large text to markov.
-        // let contents = [];
-        // for (let i = 0; i < textsToMarkov.length; i++) {
-        //     contents[i] = textsToMarkov[i].content;
-        //     console.log(i + ": " + textsToMarkov[i].title);
-        // }
-        // let joinedText = contents.join(' ');
-
         // Combining all lines into one text to markov.
-        //console.log("Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]), textsToMarkov[0]);
         console.log("Markov Number of Texts: ", textsToMarkov[0].length, Array.isArray(textsToMarkov[0]));
+        //console.log("******** Texts: ", textsToMarkov[0]);
         let joinedText = "";
         for (let i = 0; i < textsToMarkov.length; i++) {
           if (Array.isArray(textsToMarkov[i])) {
@@ -527,10 +521,6 @@ if (cluster.isMaster) {
 
 
 
-    socket.on('sendchat', function(data) {
-      // Transmit to everyone who is connected //
-      io.sockets.emit('chat', socket.username, data);
-    });
 
     socket.on('interactionTrail', function(data) {
       console.log("Received interactionTrail: " + data);
@@ -607,31 +597,33 @@ if (cluster.isMaster) {
 
 
     socket.on('selectedPhrase', function(data) {
-      console.log("****** Phrase Selected: ******\n" + data);
+      console.log("****** Phrase Selected: ******\n" + data.phrase);
 
-      redisClient.lpush("generatedPoem", data);
+      redisClient.lpush("generatedPoem", data.phrase);
 
       redisClient.get('theaterID', function(err, reply) {
         theaterID = reply;
         if (theaterID) {
-          io.to(theaterID).emit('selectedPhrase', { phrase: data });
+          io.to(theaterID).emit('selectedPhrase', data);
         }
       });
 
       redisClient.get('installationID', function(err, reply) {
         installationID = reply;
         if (installationID) {
-          io.to(installationID).emit('selectedPhrase', { phrase: data });
+          io.to(installationID).emit('selectedPhrase', data);
         }
       });
 
       redisClient.get('audioControllerID', function(err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
-          io.to(audioControllerID).emit('/diamonds/selectedPhrase', { phrase: data }, 1);
+          io.to(audioControllerID).emit('/diamonds/selectedPhrase', data, 1);
         }
       });
     })
+
+
 
     socket.on('section', function(data) {
       console.log("Section is now: " + data);
@@ -675,26 +667,6 @@ if (cluster.isMaster) {
       io.sockets.emit('setSection', sect, title);
     };
 
-
-    // pick a random user from those still connected and return the user
-    getRandomUser = function() {
-      var randomUser = Math.floor(Math.random() * ioClients.length);
-      var user = io.sockets.socket(ioClients[randomUser]);
-      return user;
-    };
-
-    getNextUser = function() {
-      // console.log("ioClients Length: ", ioClients.length);
-      // console.log("io.sockets.socket length: ", io.sockets.socket.length);
-      var user = io.sockets.socket(ioClients[ioClientCounter]);
-      ioClientCounter = ioClientCounter + 1;
-      if (ioClientCounter >= ioClients.length) {
-        ioClientCounter = 0;
-      }
-      // console.log("Username ", user.username);
-
-      return user;
-    };
 
     function getRandomColor() {
       var letters = '0123456789ABCDEF'.split('');

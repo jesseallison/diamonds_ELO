@@ -22,13 +22,13 @@
 <body>
   <div class="wrapper">
     <div class="welcomeText">
-      <h1 onclick="Tone.startMobile();document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block';">Bound by Digital Countries</h1>
+      <h1 onclick="Tone.start();document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block';">Bound by Digital Countries</h1>
       <p>Words | <strong>Vincent A. Cellucci</strong></p>
       <p>Audio | <strong>Jesse Allison</strong></p>
       <p>Visuals | <strong>Derick Ostrenko</strong></p>
       <p>UnMute your phone and Turn up your volume.</p>
       <p>Then tap the button to begin.</p>
-      <p><a href="#" class="myButton" onclick="Tone.startMobile(); document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block'; document.getElementsByClassName('gentext')[0].style.display = 'block'; document.getElementsByClassName('beforeGentext')[0].style.display = 'block';">Start</a></p>
+      <p><a href="#" id="button" class="myButton" onclick="Tone.start(); document.getElementsByClassName('welcomeText')[0].style.display = 'none';document.getElementsByClassName('scoreText')[0].style.display = 'block'; document.getElementsByClassName('gentext')[0].style.display = 'block'; document.getElementsByClassName('beforeGentext')[0].style.display = 'block';">Start</a></p>
       <p><em>Tapping is the new snapping!</em></p>
     </div>
     <!-- END welcomeText DIV -->
@@ -252,7 +252,7 @@
 
 
       function registerWithServer() {
-        // Tone.startMobile();
+        // Tone.start();
         // causeSound.triggerPitch();
         // causeSound.triggerCauseway();
         socket.emit('addme', {
@@ -321,6 +321,7 @@
 
       socket.on('volta', function(data) {
         console.log("Volta: ", data);
+        dSound.playRandomMelody(9, '2n', '16n', 0.15);
         dSound.speak('Umm, volta, yeah.');
       });
 

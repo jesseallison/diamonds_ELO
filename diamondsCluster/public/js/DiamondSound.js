@@ -18,7 +18,7 @@ var DiamondSound = function() {
       //"wet": 0.8
   }).connect(this.gainMaster).start();
 
-  this.synth = new Tone.SimpleSynth({
+  this.synth = new Tone.Synth({
     "oscillator": {
       "type": "sine"
     },
@@ -49,7 +49,7 @@ var DiamondSound = function() {
 
   //this.gainy = new Tone.Gain().connect(this.gainMaster);
   // this.filt2 = new Tone.Filter(this.tone.midiToNote(this.pitch+12), "bandpass").connect(this.gainy);
-  this.filt = new Tone.Filter(this.tone.midiToNote(this.pitch + 12), "bandpass").connect(this.gainMaster);
+  this.filt = new Tone.Filter(Tone.Midi(this.pitch + 12).toFrequency(), "bandpass").connect(this.gainMaster);
   this.filt.Q.value = 15;
   this.filt.gain.value = 50;
   // this.filt2.Q.value = 2;
@@ -81,13 +81,37 @@ DiamondSound.prototype.audienceEnable = function(enabled) {
 }
 
 DiamondSound.prototype.playPitch = function() {
-  this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch + 12), 5);
+  this.synth.triggerAttackRelease(this.mtof(this.pitch + 12), 5);
 };
 
 DiamondSound.prototype.triggerPitch = function() {
-  this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch + 12), 5);
+  this.synth.triggerAttackRelease(this.mtof(this.pitch + 12), 5);
   // socket.emit('triggerPitch', dSound.pitch);
 };
+
+DiamondSound.prototype.playRandomMelody = function(numNotes, duration, tempo, volume) {
+  let numberOfNotes = numNotes ? numNotes : 1;
+  for (let i = 0; i < numberOfNotes; i++) {
+    let pitch = this.randomPitch();
+    let time;
+    let pulses = i * 2;
+    if (!pulses) {
+      time = '+0:0:0';
+    } else {
+      time = `+0:0:${pulses}`
+    }
+    //console.log('Time', time);
+    this.synth.triggerAttackRelease(this.mtof(pitch), '2n', time, volume);
+  }
+}
+
+DiamondSound.prototype.mtof = function(midi) {
+  return Tone.Midi(midi).toFrequency();
+}
+
+DiamondSound.prototype.randomPitch = function() {
+  return this.pitchCollection[Math.floor(Math.random() * this.pitchCollection.length)];
+}
 
 DiamondSound.prototype.playChord = function(chordNotes, chordLength) {
   if (chordNotes) {
@@ -97,7 +121,7 @@ DiamondSound.prototype.playChord = function(chordNotes, chordLength) {
     this.chordLength = chordLength;
   }
 
-  this.chordSynth.triggerAttackRelease(this.chord.map(this.tone.midiToNote), this.chordLength);
+  this.chordSynth.triggerAttackRelease(this.chord.map(this.mtof), this.chordLength);
 };
 
 DiamondSound.prototype.sustainChord = function(chordNotes, chordLength) {
@@ -148,21 +172,21 @@ DiamondSound.prototype.playEnding = function() {
 
 
 DiamondSound.prototype.triggerDiamonds = function() {
-  this.synth.triggerAttackRelease(this.tone.midiToNote(this.pitch + 12), 5);
+  this.synth.triggerAttackRelease(this.pitch + 12, 5);
   this.playerDiamonds.start();
 };
 
 DiamondSound.prototype.speak = function(text) {
-  this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-  var freq = this.tone.midiToNote(this.pitch + 12);
-  this.filt.frequency.value = (freq);
-  //this.filt2.frequency.value = (freq);
-  var rate = Math.floor(Math.random() * (12.) + 4.);
-  this.tremolo.frequency.value = freq;
+  // this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+  // var freq = Tone.Midi(this.pitch + 12).toFrequency();
+  // this.filt.frequency.value = (freq);
+  // //this.filt2.frequency.value = (freq);
+  // var rate = Math.floor(Math.random() * (12.) + 4.);
+  // this.tremolo.frequency.value = freq;
 
   // check for safety - iOS will fail if you try to say something and can't
   if (meSpeak.isConfigLoaded() && meSpeak.isVoiceLoaded(speakVoice)) {
     meSpeak.speak(text);
   }
-  this.synth.triggerAttackRelease(freq, "4n", {}, 0.15);
+  // this.synth.triggerAttackRelease(freq, "4n", {}, 0.15);
 };
