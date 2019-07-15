@@ -4,7 +4,12 @@ let user = {
 }
 user.sessionName = localStorage.getItem('sessionName') || 'default';
 
-console.log("session name:", user.sessionName);
+var ele = document.getElementById("welcomeTitle");
+if (ele) {
+  ele.innerHTML = "This session's name is: " + user.sessionName;
+}
+
+// console.log("session name:", user.sessionName);
 
 let generatedTexts = [];
 
@@ -219,9 +224,9 @@ function registerWithServer() {
 // Only for the Overlay/intro page
 
 socket.on('chat', function (data) {
-  console.log("chat: " + data);
+  console.log("chat: ", data);
   if (data.corpus) {
-    console.log("Audience Corpus:", data.corpus)
+    // console.log("Audience Corpus:", data.corpus)
     user.corpus = data.corpus;
     putInText(user.corpus);
   }

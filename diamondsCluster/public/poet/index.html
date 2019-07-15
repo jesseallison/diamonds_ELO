@@ -66,14 +66,15 @@
     // **********************************************************
     // Only for the Overlay/intro page
 
-    socket.on('chat', function(data) {
-      console.log("chat: " + data);
+    socket.on('chat', function (data) {
+      console.log("chat: ", data);
       if (data.corpus) {
         user.corpus = data.corpus;
+        putInText(user.corpus);
       }
     });
 
-    socket.on('setSection', function(data) {
+    socket.on('setSection', function (data) {
       console.log("The section is now: " + data.title);
     });
 
@@ -102,7 +103,7 @@
       }
     }
 
-    socket.on('itemback', function(data) {
+    socket.on('itemback', function (data) {
       // console.log("itemback: " + data.phrase);
 
       if (pArray.length < pALimit) {
@@ -156,10 +157,44 @@
       });
     }
 
-    window.onload = function() {
+    // window.onload = function () {
+    //   var xhr = new XMLHttpRequest();
+
+
+
+    function putInText(seedPath = "/data/score.txt") {
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', '../data/score.txt', true);
-      xhr.onreadystatechange = function() {
+
+      if (user.corpus == "horrortech-corpus") {
+        seedPath = "/data/seeds/horrortech/seed.txt"
+      }
+
+      if (user.corpus == "lilghettoqueer-corpus") {
+        seedPath = "/data/seeds/lilghettoqueer/seed.txt"
+      }
+
+      if (user.corpus == "melanwormy-corpus") {
+        seedPath = "/data/seeds/melanwormy/seed.txt"
+      }
+
+      if (user.corpus == "mythrimony-corpus") {
+        seedPath = "/data/seeds/mythrimony/seed.txt"
+      }
+
+      if (user.corpus == "orbitopera-corpus") {
+        seedPath = "/data/seeds/orbitopera/seed.txt"
+      }
+
+      if (user.corpus == "rivergration-corpus") {
+        seedPath = "/data/seeds/rivergration/seed.txt"
+      }
+
+      console.log("seedPath", seedPath);
+      xhr.open('GET', seedPath, true);
+
+
+      // xhr.open('GET', '../data/score.txt', true);
+      xhr.onreadystatechange = function () {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
         document.getElementsByClassName('scoreText')[0].innerHTML = this.responseText;
