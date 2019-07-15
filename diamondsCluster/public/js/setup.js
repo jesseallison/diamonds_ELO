@@ -63,12 +63,17 @@ function registerWithServer() {
 // **********************************************************
 // Only for the Overlay/intro page
 
-function registerPoet() {
+function registerPoet(corpusName = 'horrortech-corpus') {
+  // let corpusName = 'horrortech-corpus';
   let sessionName = document.forms["poet-form"]["session-name"].value;
+  // let corpusName = document.forms["poet-form"]["corpus-name"].value;
   console.log("Session Name: ", sessionName);
+  console.log("Corpus Name: ", corpusName);
+
   socket.emit('registerSession', {
     'name': sessionName,
-    'corpus': 'horrortech-corpus',
+    'corpus': corpusName,
+    // 'corpus': 'horrortech-corpus',
     'date': Date.now()
   });
   localStorage.setItem("sessionName", sessionName);
@@ -89,7 +94,7 @@ function registerAudience() {
 };
 
 socket.on('sessions', function (data) {
-  console.log("sessions data: " + data);
+  console.log("sessions data: ", data);
   if (data.list) {
     console.log("Session list: ", data.list);
     createUL(data.list);

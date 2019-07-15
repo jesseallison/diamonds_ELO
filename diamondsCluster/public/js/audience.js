@@ -4,6 +4,8 @@ let user = {
 }
 user.sessionName = localStorage.getItem('sessionName') || 'default';
 
+console.log("session name:", user.sessionName);
+
 let generatedTexts = [];
 
 var colors = new Array(
@@ -122,13 +124,49 @@ $('.scoreText').click(function (e) {
 
 window.onload = function () {
   registerWithServer();
+}
+function putInText(seedPath = "/data/score.txt") {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/data/score.txt', true);
+
+  // read new score text here
+
+  // switch (user.corpus) {
+  //   case "horrortech-corpus":
+  //     seedPath = "/data/seeds/horror-tech/seed.html";
+  //     break;
+  //   case "lilghettoqueer-corpus":
+  //     seedPath = "/data/seeds/lilghettoqueer-tech/seed.html";
+  //     break;
+  //   case 2:
+  //     seedPath = "Tuesday";
+  //     break;
+  //   case 3:
+  //     seedPath = "Wednesday";
+  //     break;
+  //   case 4:
+  //     seedPath = "Thursday";
+  //     break;
+  //   case 5:
+  //     seedPath = "Friday";
+  //     break;
+  //   case 6:
+  //     seedPath = "/data/score.txt";
+  // }
+
+  if (user.corpus == "lilghettoqueer-corpus") {
+    seedPath = "/data/seeds/lilghettoqueer/seed.html"
+  }
+
+  console.log("seedPath", seedPath);
+  xhr.open('GET', seedPath, true);
   xhr.onreadystatechange = function () {
     if (this.readyState !== 4) return;
     if (this.status !== 200) return;
     var scoreText = document.getElementsByClassName("scoreText")[0];
+
     scoreText.innerHTML = this.responseText;
+
+
     // $(".scoreText").textfill();
     actOnText();
     document.getElementsByClassName("scoreText")[0].style.borderLeft = "15px solid " + myColor;
@@ -188,7 +226,9 @@ function registerWithServer() {
 socket.on('chat', function (data) {
   console.log("chat: " + data);
   if (data.corpus) {
+    console.log("Audience Corpus:", data.corpus)
     user.corpus = data.corpus;
+    putInText(user.corpus);
   }
 });
 
