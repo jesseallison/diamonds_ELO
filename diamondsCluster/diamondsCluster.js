@@ -44,7 +44,7 @@ app.use(express.static(__dirname + '/public'));
 function start() {
   var httpServer = http.createServer(app);
   // server is the node server (web app via express)
-  var server = httpServer.listen(serverPort, function(err) {
+  var server = httpServer.listen(serverPort, function (err) {
     if (err) return cb(err);
 
     // this code can launch the server on port 80 and switch the user id away from sudo
@@ -59,11 +59,11 @@ function start() {
 
   redisClient = redis.createClient(redisPort, redisIP);
 
-  redisClient.on('connect', function() {
+  redisClient.on('connect', function () {
     console.log('Redis client connected');
   });
 
-  redisClient.on("error", function(err) {
+  redisClient.on("error", function (err) {
     console.log("Error " + err);
   });
 }
@@ -77,7 +77,7 @@ if (cluster.isMaster) {
     console.log('worker %s started.', worker.process.pid);
   }
 
-  cluster.on('death', function(worker) {
+  cluster.on('death', function (worker) {
     console.log('worker %s died. restart...', worker.process.pid);
   });
 
@@ -146,17 +146,16 @@ if (cluster.isMaster) {
   // Make the default Session
   redisClient.sadd('sessionList', defaultSession);
   redisClient.hmset(defaultSession + "-session", { 'name': defaultSession, 'corpus': defaultCorpus }, (err, reply) => {
-    console.log(data);
+    // console.log(data); //TODO: Figure out why this throws an error?
   });
   console.log("Session Name Registered: ", defaultSession);
 
 
-
   // Respond to web sockets with socket.on
-  io.sockets.on('connection', function(socket) {
+  io.sockets.on('connection', function (socket) {
     var ioClientCounter = 0; // Can I move this outside into global vars?
 
-    socket.on('addme', function(data) {
+    socket.on('addme', function (data) {
       username = data.name;
       var userColor = data.color;
       var userNote = data.note || 60;
@@ -199,7 +198,7 @@ if (cluster.isMaster) {
       socket.corpus = defaultCorpus;
       if (data.corpus) {
         socket.corpus = data.corpus
-          // .emit to send message back to caller.
+        // .emit to send message back to caller.
         socket.emit('chat', {
           'greeting': `SERVER: You have connected. Hello: ${username} ID: ${socket.id} Color: ${socket.userColor}`,
           'name': username,
@@ -232,7 +231,7 @@ if (cluster.isMaster) {
       //socket.broadcast.emit('chat', 'SERVER: A new user has connected: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
 
       // Redis server to get the shared currentSection
-      redisClient.get('currentSection', function(err, reply) {
+      redisClient.get('currentSection', function (err, reply) {
         currentSection = reply;
         if (currentSection) {
           var title = getSection(currentSection);
@@ -244,7 +243,7 @@ if (cluster.isMaster) {
       // If it is a normal user, alert the audioController
       if (username == "a_user") {
         // oscClient.send('/causeway/registerUser', socket.id, socket.userColor, socket.userLocation[0],socket.userLocation[1], socket.userNote);
-        redisClient.get('audioControllerID', function(err, reply) {
+        redisClient.get('audioControllerID', function (err, reply) {
           audioControllerID = reply;
           if (audioControllerID) {
             io.to(audioControllerID).emit('/diamonds/registerUser', { id: socket.id, color: socket.userColor, locationX: socket.userLocation[0], locationY: socket.userLocation[1] }, 1);
@@ -254,7 +253,7 @@ if (cluster.isMaster) {
     });
 
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
       // ioClients.remove(socket.id);	// FIXME: Remove client if they leave
       io.sockets.emit('chat', 'SERVER: ' + socket.id + ' has left the building');
     });
@@ -263,7 +262,7 @@ if (cluster.isMaster) {
     // ****************************************************
     // ****  The phrase generation system using set scans in redis to rita markov loadText 
 
-    socket.on('item', function(data) {
+    socket.on('item', function (data) {
       // --- Someone selected 'item', search for texts that use the word, then markov them. --- //
       // sscan for texts, recursively filling up a matching text array. If it doesn't find 10
       // texts are randomly chosen and passed to the callback function. These are passed to 
@@ -274,7 +273,7 @@ if (cluster.isMaster) {
       var matchingTexts = [];
       var cursor = '0';
 
-      var diamondsCorpus = sscan(data, function(returnedTexts) {
+      var diamondsCorpus = sscan(data, function (returnedTexts) {
         // console.log("*** Texts Returned ***\n", returnedTexts);
         let generatedText;
         // Now Markov the texts
@@ -292,20 +291,20 @@ if (cluster.isMaster) {
           redisClient.lpush("markov", generatedText);
           // Send generated sentances to EVERYONE  FIXME: Should this only be a few people?
           socket.emit('itemback', { phrase: generatedText, color: socket.userColor });
-          redisClient.get('controllerID', function(err, reply) {
+          redisClient.get('controllerID', function (err, reply) {
             controllerID = reply;
             if (controllerID) {
               io.to(controllerID).emit('itemback', { phrase: generatedText, color: socket.userColor });
             }
           });
-          redisClient.get('theaterID', function(err, reply) {
+          redisClient.get('theaterID', function (err, reply) {
             theaterID = reply;
             if (theaterID) {
               io.to(theaterID).emit('itemback', { phrase: generatedText, color: socket.userColor });
             }
           });
 
-          redisClient.get('installationID', function(err, reply) {
+          redisClient.get('installationID', function (err, reply) {
             installationID = reply;
             if (installationID) {
               io.to(installationID).emit('itemback', { phrase: generatedText, color: socket.userColor });
@@ -322,7 +321,7 @@ if (cluster.isMaster) {
           cursor,
           'MATCH', '*' + data.text + '*',
           'COUNT', '10', // Find 10 occurances of the word that was tapped in the CORPUS.
-          function(err, res) {
+          function (err, res) {
             if (err) throw err;
 
             // Update the cursor position for the next scan
@@ -366,7 +365,7 @@ if (cluster.isMaster) {
               console.log('--- Iteration complete, matches below ---');
               if (matchingTexts.length < 10) {
                 // Not enough, add random texts.
-                let texts = redisClient.srandmember(socket.corpus, (10 - matchingTexts.length), function(err, reply) {
+                let texts = redisClient.srandmember(socket.corpus, (10 - matchingTexts.length), function (err, reply) {
                   if (err) throw err;
                   // console.log("Texts to add: ", JSON.stringify(reply[1]));
                   matchingTexts.push(reply[1]);
@@ -416,7 +415,7 @@ if (cluster.isMaster) {
     // *******************************************************
     // *******************************************************
 
-    socket.on('registerSession', function(data) {
+    socket.on('registerSession', function (data) {
       let sessionName = data.name;
       redisClient.sadd('sessionList', data.name);
       data.corpus = data.corpus || defaultCorpus;
@@ -434,15 +433,15 @@ if (cluster.isMaster) {
       // })
     });
 
-    socket.on('joinSession', function(data) {
+    socket.on('joinSession', function (data) {
       let sessionName = data.name;
       console.log(`User ${data.user} is Joining: ${sessionName}`);
       redisClient.sismember('sessionList', sessionName, (err, reply) => {
-          if (!reply) {
-            redisClient.sadd('sessionList', sessionName);
-          }
-        })
-        // Do I save this for use in the audience page to come?
+        if (!reply) {
+          redisClient.sadd('sessionList', sessionName);
+        }
+      })
+      // Do I save this for use in the audience page to come?
       socket.sessionName = sessionName;
       redisClient.hget(sessionName + "-session", 'corpus', (err, reply) => {
         // do something with the reply
@@ -461,7 +460,7 @@ if (cluster.isMaster) {
     });
 
     function updateSessions() {
-      redisClient.smembers('sessionList', function(err, reply) {
+      redisClient.smembers('sessionList', function (err, reply) {
         let sessionList = reply;
         console.log(`Session List: ${sessionList}`);
         io.sockets.emit('sessions', {
@@ -470,7 +469,7 @@ if (cluster.isMaster) {
       });
     };
 
-    socket.on('getSessions', function(data) {
+    socket.on('getSessions', function (data) {
       redisClient.smembers('sessionList', (err, reply) => {
         let sessionList = reply;
         console.log(`Sending session List: ${sessionList}`);
@@ -480,32 +479,32 @@ if (cluster.isMaster) {
       });
     });
 
-    socket.on('start', function(data) {
+    socket.on('start', function (data) {
       console.log("start: ", data);
       socket.broadcast.emit('start', data);
     });
 
-    socket.on('excite', function(data) {
+    socket.on('excite', function (data) {
       console.log("excite: ", data);
       socket.broadcast.emit('excite', data);
     });
 
-    socket.on('echo', function(data) {
+    socket.on('echo', function (data) {
       console.log("echo: ", data.phrase);
       socket.broadcast.emit('echo', data);
     });
 
-    socket.on('kill', function(data) {
+    socket.on('kill', function (data) {
       console.log("kill: ", data);
       socket.broadcast.emit('kill', data);
     });
 
-    socket.on('volta', function(data) {
+    socket.on('volta', function (data) {
       console.log("volta: ", data);
       socket.broadcast.emit('volta', data);
     });
 
-    socket.on('end', function(data) {
+    socket.on('end', function (data) {
       console.log("end: ", data);
       socket.broadcast.emit('end', data);
     });
@@ -522,21 +521,21 @@ if (cluster.isMaster) {
 
 
 
-    socket.on('interactionTrail', function(data) {
+    socket.on('interactionTrail', function (data) {
       console.log("Received interactionTrail: " + data);
       // send somewhere?  perhaps theatre?
       redisClient.lpush("interactionTrail", data); // Store for some other time...
     })
 
-    socket.on('audience/enable', function(data) {
+    socket.on('audience/enable', function (data) {
       console.log("audience/enable", data);
       io.sockets.emit('audienceEnable', data);
     });
 
 
 
-    socket.on('nextChord', function(data) {
-      redisClient.get('audioControllerID', function(err, reply) {
+    socket.on('nextChord', function (data) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/nextChord', { id: socket.id }, 1);
@@ -545,18 +544,18 @@ if (cluster.isMaster) {
       socket.broadcast.emit('triggerNextChord', data);
     });
 
-    socket.on('playChord', function(data) {
+    socket.on('playChord', function (data) {
       console.log("playChord", data);
       io.sockets.emit('playChord', data);
     });
 
-    socket.on('sustainChord', function(data) {
+    socket.on('sustainChord', function (data) {
       console.log("sustainChord", data);
       io.sockets.emit('sustainChord', data);
     });
 
-    socket.on('triggerBeginning', function(data) {
-      redisClient.get('audioControllerID', function(err, reply) {
+    socket.on('triggerBeginning', function (data) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/triggerBeginning', { id: socket.id }, 1);
@@ -565,8 +564,8 @@ if (cluster.isMaster) {
       socket.broadcast.emit('triggerBeginning', data);
     });
 
-    socket.on('triggerUtopalypse', function(data) {
-      redisClient.get('audioControllerID', function(err, reply) {
+    socket.on('triggerUtopalypse', function (data) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/triggerUtopalypse', { id: socket.id }, 1);
@@ -575,8 +574,8 @@ if (cluster.isMaster) {
       socket.broadcast.emit('triggerUtopalypse', data);
     });
 
-    socket.on('triggerDiamonds', function(data) {
-      redisClient.get('audioControllerID', function(err, reply) {
+    socket.on('triggerDiamonds', function (data) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/triggerDiamonds', { id: socket.id }, 1);
@@ -585,8 +584,8 @@ if (cluster.isMaster) {
       socket.broadcast.emit('triggerDiamonds', data);
     });
 
-    socket.on('triggerEnding', function(data) {
-      redisClient.get('audioControllerID', function(err, reply) {
+    socket.on('triggerEnding', function (data) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/triggerEnding', { id: socket.id }, 1);
@@ -596,26 +595,26 @@ if (cluster.isMaster) {
     });
 
 
-    socket.on('selectedPhrase', function(data) {
+    socket.on('selectedPhrase', function (data) {
       console.log("****** Phrase Selected: ******\n" + data.phrase);
 
       redisClient.lpush("generatedPoem", data.phrase);
 
-      redisClient.get('theaterID', function(err, reply) {
+      redisClient.get('theaterID', function (err, reply) {
         theaterID = reply;
         if (theaterID) {
           io.to(theaterID).emit('selectedPhrase', data);
         }
       });
 
-      redisClient.get('installationID', function(err, reply) {
+      redisClient.get('installationID', function (err, reply) {
         installationID = reply;
         if (installationID) {
           io.to(installationID).emit('selectedPhrase', data);
         }
       });
 
-      redisClient.get('audioControllerID', function(err, reply) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/selectedPhrase', data, 1);
@@ -625,7 +624,7 @@ if (cluster.isMaster) {
 
 
 
-    socket.on('section', function(data) {
+    socket.on('section', function (data) {
       console.log("Section is now: " + data);
       currentSection = data;
       redisClient.set("currentSection", currentSection);
@@ -644,16 +643,16 @@ if (cluster.isMaster) {
       "End"
     ];
 
-    getSection = function(sect) {
+    getSection = function (sect) {
       return sectionTitles[sect];
     }
 
     // sendSection(currentSection);	 // Sets everyone's section
-    sendSection = function(sect) {
+    sendSection = function (sect) {
       var title = getSection(sect);
       io.sockets.emit('setSection', { sect: sect, title: title });
 
-      redisClient.get('audioControllerID', function(err, reply) {
+      redisClient.get('audioControllerID', function (err, reply) {
         audioControllerID = reply;
         if (audioControllerID) {
           io.to(audioControllerID).emit('/diamonds/currentSection', { section: sect, title: title }, 1);
@@ -662,7 +661,7 @@ if (cluster.isMaster) {
     };
 
     // Section shared from Max to UIs
-    shareSection = function(sect) {
+    shareSection = function (sect) {
       var title = getSection(sect);
       io.sockets.emit('setSection', sect, title);
     };

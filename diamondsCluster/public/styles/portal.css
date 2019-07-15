@@ -8,26 +8,36 @@ body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: grid;
   grid-template-columns: 2fr 1fr 6fr 1fr;
-  margin-top: 1vw;
-  margin-left: 1vw;
+  margin: 10px;
 }
 
 a {
   text-decoration: none;
 }
 
+::selection {
+  background: #ffa3a3;
+}
+
+header {
+  grid-column: 1/2;
+}
+
 main {
-  margin-left: 10vw;
+  grid-column: 3/4;
 }
 
 header img {
   max-width: 214px;
   width: 20vw;
+  position: fixed;
 }
 
 h1 {
   font-weight: bold;
   text-decoration: underline;
+  margin-bottom: 22px;
+  margin-top: 22px;
 }
 
 nav h1,li {
@@ -50,16 +60,31 @@ h2 {
   font-weight: bold;
   text-decoration-line: underline;
   /* text-shadow: 0 3px 6px; */
-  font-size: calc(10px + 3.5vmax);
+  font-size: calc(10px + 3vw);
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+p {
+  margin-top: 16px;
+  margin-top: 16px;
 }
 
 input[type=text] {
-  /* border: 1px solid #707070; */
+  border: 1px solid #707070;
+  width: calc(100% - 22px);
+  font-size: calc(10px + 1.5vmax);
   padding: 10px;
-  width: 100%;
-  font-size: 3.5vw;
-  /* border-radius: 0; */
+  border-radius: 2px;
+  box-shadow: inset 0px 1px 3px 0px #707070;
 }
+
+/* header {
+  border: 1px solid red;
+}
+main {
+  border: 1px solid red;
+} */
 
 @media screen and (min-width: 1440px) {
   nav h1,li  {
@@ -71,13 +96,26 @@ input[type=text] {
  }
 }
 
-/* @media screen and (max-width: 640px) {
-  nav h1,li  {
-     font-size: 16px;
-  }
+a.button {
+  display:block;
+  margin:10px auto;
+  padding:15px 1.2em;
+  border-radius:2px;
+  text-decoration:none;
+  font-weight: bold;
+  color:#fff;
+  /* background-image: linear-gradient(-45deg, rgb(58, 159, 226), rgb(58, 196, 250)); */
+  text-align:center;
+}
 
-  h2 {
-    font-size: 10px;
- }
-} */
+.d1 {
+  background-image: linear-gradient(-45deg, rgb(58, 159, 226), rgb(58, 196, 250));
+}
 
+.d2 {
+  background-image: linear-gradient(-45deg, rgb(226, 58, 176), rgb(87, 58, 250));
+}
+
+.d3 {
+  background-image: linear-gradient(-45deg, rgb(106, 226, 58), rgb(208, 250, 58));
+}
