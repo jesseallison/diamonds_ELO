@@ -128,33 +128,28 @@ window.onload = function () {
 function putInText(seedPath = "/data/score.txt") {
   var xhr = new XMLHttpRequest();
 
-  // read new score text here
-
-  // switch (user.corpus) {
-  //   case "horrortech-corpus":
-  //     seedPath = "/data/seeds/horror-tech/seed.html";
-  //     break;
-  //   case "lilghettoqueer-corpus":
-  //     seedPath = "/data/seeds/lilghettoqueer-tech/seed.html";
-  //     break;
-  //   case 2:
-  //     seedPath = "Tuesday";
-  //     break;
-  //   case 3:
-  //     seedPath = "Wednesday";
-  //     break;
-  //   case 4:
-  //     seedPath = "Thursday";
-  //     break;
-  //   case 5:
-  //     seedPath = "Friday";
-  //     break;
-  //   case 6:
-  //     seedPath = "/data/score.txt";
-  // }
+  if (user.corpus == "horrortech-corpus") {
+    seedPath = "/data/seeds/horrortech/seed.txt"
+  }
 
   if (user.corpus == "lilghettoqueer-corpus") {
-    seedPath = "/data/seeds/lilghettoqueer/seed.html"
+    seedPath = "/data/seeds/lilghettoqueer/seed.txt"
+  }
+
+  if (user.corpus == "melanwormy-corpus") {
+    seedPath = "/data/seeds/melanwormy/seed.txt"
+  }
+
+  if (user.corpus == "mythrimony-corpus") {
+    seedPath = "/data/seeds/mythrimony/seed.txt"
+  }
+
+  if (user.corpus == "orbitopera-corpus") {
+    seedPath = "/data/seeds/orbitopera/seed.txt"
+  }
+
+  if (user.corpus == "rivergration-corpus") {
+    seedPath = "/data/seeds/rivergration/seed.txt"
   }
 
   console.log("seedPath", seedPath);
