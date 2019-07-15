@@ -8,7 +8,7 @@ body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   display: grid;
   grid-template-columns: 2fr 1fr 6fr 1fr;
-  margin: 10px;
+  margin: 10px 10px 50px 10px;
 }
 
 a {
