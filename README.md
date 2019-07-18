@@ -6,6 +6,8 @@
 - [ ] Add session chooser to "I am theater" link from portal
 - [ ] simplify the sesssion chooser
 - [ ] update the poet controller UI
+- [ ] Add audio event for each of the controller buttons, possibly tied to each corpus
+- [ ] Add sessionName verification for each of the audio events
 
 **Soon**
 - [ ] Allow poet to load in their own poem and corpus
@@ -14,7 +16,7 @@
 
 **Later**
 - [ ] Create interface for poet to be able to choose different pairings from seeds and corpora
-- [ ] use socet.io rooms/groups to tie session user together
+- [ ] use socet.io rooms/groups to tie session user together – Right now they simply append -sessionName to the controller, theater, etc. and store them as separate ids.  This works quite well so far for the unique pages. Should probably keep even after moving to rooms/groups.
 
 **Maybe**
 - [ ] Replace markov with machine learning
