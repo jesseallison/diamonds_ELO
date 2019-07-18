@@ -36,6 +36,12 @@
 
     getSessions();
 
+    document.getElementById("sessionSelect").onchange = function () {
+      if (this.selectedIndex !== 0) {
+        window.location.href = this.value;
+      }
+    };
+
     document.getElementById("sessionSelect").addEventListener("change", function () {
       let sel = document.getElementById('sessionSelect');
       let sessionName = sel.options[sel.selectedIndex].text;

@@ -137,20 +137,15 @@ function createUL(array) {
 }
 
 function createOpts(array) {
-  // let sel = document.getElementById("sessionSelect");
-  // let sessionName = selectEle.innerHTML;
 
   let audText = '<option name="session-name" value="/audience">audience</option><option disabled>Choose a session:</option>';
 
   let sel = document.getElementById('sessionSelect');
   if (sel) {
-    // let sessionName = sel.options[sel.selectedIndex].text;
-    let sessionName = sel.innerHTML;
-
+    let sessionName;
     array.forEach(function (item) {
       sessionName += '<option name="session-name" value="/audience">' + item + '</option>';
     });
-    // console.log("sel.innerHTML", sel.innerHTML);
     sel.innerHTML = audText + sessionName;
   }
 }
