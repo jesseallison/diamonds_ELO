@@ -20,6 +20,7 @@
     <button onclick="socket.emit('kill')">Kill</button>
     <button onclick="socket.emit('volta')">Volta</button>
     <button onclick="socket.emit('end')">End</button>
+    <div id="sessionName"></div>
   </div>
   <div class="generatedText stuff"></div>
   <div class="gentextbuttons">
@@ -33,13 +34,20 @@
 
   <script type="text/javascript">
     let user = {
-      'name': 'a_user',
-      'id': 1000,
-      'color': getRandomColor()
+      name: 'controller',
+      id: 1000,
+      color: '#3c23ff',
+      location: [0.5, 0.5],
+      date: Date.now()
     }
     user.sessionName = localStorage.getItem('sessionName') || 'default';
+    user.corpus = localStorage.getItem('corpus') || 'horrortech-corpus';
+    user.socketID = localStorage.getItem('socketID') || null;
+    user.color = localStorage.getItem('color') || '#3c23ff';
     // let myColor = getRandomColor();
     // let myLocation = [0.5, 0.5]; // Default centered
+
+    document.getElementById('sessionName').innerHTML = user.sessionName;
 
     // var socket = io.connect('130.39.92.112:8000/');
     var socket = io.connect(window.location.origin, {
@@ -55,7 +63,7 @@
 
     function registerWithServer() {
       socket.emit('addme', {
-        name: "controller",
+        username: user.name,
         sessionName: user.sessionName,
         corpus: user.corpus,
         color: user.color
@@ -63,18 +71,32 @@
     }
     registerWithServer();
 
+    function joinSession() {
+      socket.emit('joinSession', {
+        'username': user.name,
+        'sessionName': user.sessionName,
+        'color': user.color,
+        'date': user.date
+      });
+    }
+    joinSession();
+
     // **********************************************************
     // Only for the Overlay/intro page
 
-    socket.on('chat', function (data) {
-      console.log("chat: ", data);
+
+    socket.on('registerComplete', function(data) {
+      console.log("registerComplete: " + data);
+      user.socketID = data.socketID;
+      localStorage.setItem("socketID", data.socketID);
       if (data.corpus) {
         user.corpus = data.corpus;
+        localStorage.setItem("corpus", data.corpus);
         putInText(user.corpus);
       }
     });
 
-    socket.on('setSection', function (data) {
+    socket.on('setSection', function(data) {
       console.log("The section is now: " + data.title);
     });
 
@@ -98,40 +120,40 @@
       }
     }
 
-    socket.on('itemback', function (data) {
-      // console.log("itemback: " + data.phrase);
+    socket.on('itemback', function(data) {
+      console.log("itemback: " + data.sessionName, data.phrase);
+      if (data.sessionName == user.sessionName) {
 
-      if (pArray.length < pALimit) {
-        pArray.unshift(data.phrase);
-        console.log("if", pArray.length);
-      } else {
-        pArray.unshift(data.phrase);
-        pArray.pop();
-        console.log("else", pArray.length);
+        if (pArray.length < pALimit) {
+          pArray.unshift(data.phrase);
+          console.log("if", pArray.length);
+        } else {
+          pArray.unshift(data.phrase);
+          pArray.pop();
+          console.log("else", pArray.length);
+        }
+        generatedTexts.push(data.phrase); // Keeping track of all phrases received.
+        // pArray[pACount] = data.phrase;
+
+        // currentPhrase = data.phrase;
+
+        var generatedText = document.getElementsByClassName('generatedText')[0];
+        // generatedText.classList.add("blurAnimation");
+        // generatedText.classList.add("oldgentext");
+        var mf = 0;
+        generatedText.style.webkitFilter = "blur(" + mf + "px)";
+        // console.log("COLOROOROROROROR", data.color);
+        generatedText.style.color = "black";
+        // generatedText.style.fontSize = "2em";
+
+        // var headerHeight = $('.generatedText').outerHeight();
+        // $('.scoreText').css('top',headerHeight);
+
+        var st = document.getElementsByClassName('scoreText')[0];
+        // st.style.whiteSpace = "pre";
+        // st.style.overflowX = "scroll";
+        // st.style.overflowY = "scroll";
       }
-      generatedTexts.push(data.phrase); // Keeping track of all phrases received.
-      // pArray[pACount] = data.phrase;
-
-      // currentPhrase = data.phrase;
-
-      var generatedText = document.getElementsByClassName('generatedText')[0];
-      // generatedText.classList.add("blurAnimation");
-      // generatedText.classList.add("oldgentext");
-      var mf = 0;
-      generatedText.style.webkitFilter = "blur(" + mf + "px)";
-      // console.log("COLOROOROROROROR", data.color);
-      generatedText.style.color = "black";
-      // generatedText.style.fontSize = "2em";
-
-      // var headerHeight = $('.generatedText').outerHeight();
-      // $('.scoreText').css('top',headerHeight);
-
-      var st = document.getElementsByClassName('scoreText')[0];
-      // st.style.whiteSpace = "pre";
-      // st.style.overflowX = "scroll";
-      // st.style.overflowY = "scroll";
-
-
     });
 
     // function scrollto(element){ 
@@ -189,7 +211,7 @@
 
 
       // xhr.open('GET', '../data/score.txt', true);
-      xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
         document.getElementsByClassName('scoreText')[0].innerHTML = this.responseText;

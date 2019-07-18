@@ -1,109 +1,67 @@
+// var socket = io.connect('https://atlab.cct.lsu.edu/', { path: '/causeway/socket.io' });
+
 /*
 This file includes 2 things: 
-
 - Helpful JS functions
 - Websocket message handling
 
-It is referenced by 3 (soon to be 2) files:
+// It is referenced by 3(soon to be 2) files:
 
-- /sessions/audience.html
-- /sessions/theater.html
-- /setup/index.html
+//   -/sessions/audience.html -
+//   /sessions/theater.html -
+//   /setup/index.html
 
-*/
+//   *
+//   /
 
 /**********************************************
 VARIABLES
 **********************************************/
 
 let user = {
-  'name': 'a_user',
-  'id': 1000
+  name: 'a_user',
+  id: 1000,
+  corpus: 'horrortech-corpus',
+  color: '#3c23ff',
+  location: [0.5, 0.5],
+  date: Date.now()
 }
-
 user.color = getRandomColor();
 
-var myLocation = [0.5, 0.5]; // Default centered
-
-var self = this;
-
-var speakVoice = 'en/en';
-
-var dSound = new DiamondSound();
-
+// var socket = io.connect('127.0.0.1:8000');
 var socket = io.connect(window.location.origin, {
   transports: ['websocket']
 });
 
-// Add Chords, Progression, feedback, comb filtering, shimmer!
+$('.scoreText').click(function (e) {
+  target = event.target || event.srcElement;
+
+  if (target.nodeName.toLowerCase() === "span") {
+    var text = $(e.target).text();
+
+    // console.log("text:",text);
+    // $(e.target).toggleClass('underline');
+    $(e.target)[0].style.backgroundColor = user.color;
+    // console.log($(e.target)[0]);
+    dSound.speak(text);
+    socket.emit('item', text);
+  }
+});
+
+
+var myLocation = [0.5, 0.5]; // Default centered
+
+
+
+
+var speakVoice = 'en/en';
 meSpeak.loadConfig("/js/mespeak/mespeak_config.json");
 //meSpeak.loadVoice('js/mespeak/voices/en/en-us.json');
 meSpeak.loadVoice('/js/mespeak/voices/' + speakVoice + '.json');
 //meSpeak.speak('hello world',{},toneSetup());
 
-/**********************************************
- WEBSOCKETS
-**********************************************/
+var dSound = new DiamondSound();
 
-socket.on('sessions', function (data) {
-  if (data.list) {
-    console.log("Session List: ", data.list);
-    // createUL(data.list);
-    createOpts(data.list);
-  }
-});
-
-socket.on('setSection', function (data) {
-  console.log("the section is now: " + data.title);
-});
-
-socket.on('chat', function (data) {
-  console.log("chat: ", data.greeting);
-  user.socketID = data.socketID;
-  localStorage.setItem("socketID", data.socketID);
-  if (data.corpus) {
-    user.corpus = data.corpus;
-  }
-});
-
-socket.on('itemback', function (data) {
-  console.log("itemback:", data.phrase);
-  var elements = document.getElementsByClassName("gentext")[0];
-  elements.innerHTML = data.phrase;
-});
-
-socket.on('audienceEnable', function (data) {
-  console.log('enabled? ', data);
-  dSound.audienceEnable(data);
-});
-
-socket.on('playChord', function (data) {
-  dSound.playChord(data.notes, data.duration);
-});
-
-socket.on('sustainChord', function (data) {
-  dSound.playChord(data.notes, data.duration);
-});
-
-socket.on('triggerBeginning', function (data) {
-  dSound.playKepler();
-});
-
-socket.on('nextChord', function (data) {
-  dSound.nextChord();
-});
-
-socket.on('triggerUtopalypse', function (data) {
-  dSound.playUtopalypse();
-});
-
-socket.on('triggerDiamonds', function (data) {
-  dSound.playDiamonds();
-});
-
-socket.on('triggerEnding', function (data) {
-  dSound.playEnding();
-});
 
 /**********************************************
 FUNCTIONS
@@ -143,52 +101,14 @@ function createOpts(array) {
   let sel = document.getElementById('sessionSelect');
   if (sel) {
     let sessionName;
+    // let sessionName = sel.innerHTML;
+    // let sessionName = sel.options[sel.selectedIndex].text;
+
     array.forEach(function (item) {
       sessionName += '<option name="session-name" value="/audience">' + item + '</option>';
     });
     sel.innerHTML = audText + sessionName;
   }
-}
-
-function registerWithServer() {
-  socket.emit('addme', {
-    name: user.name,
-    color: user.color
-  });
-}
-
-function registerPoet(corpusName = 'horrortech-corpus') {
-  // let corpusName = 'horrortech-corpus';
-  let sessionName = document.forms["poet-form"]["session-name"].value;
-  // let corpusName = document.forms["poet-form"]["corpus-name"].value;
-  console.log("Session Name: ", sessionName);
-  console.log("Corpus Name: ", corpusName);
-
-  socket.emit('registerSession', {
-    'name': sessionName,
-    'corpus': corpusName,
-    // 'corpus': 'horrortech-corpus',
-    'date': Date.now()
-  });
-  localStorage.setItem("sessionName", sessionName);
-  user.sessionName = sessionName;
-  return false;
-};
-
-function registerAudience(sessionName) {
-  // let sessionName = document.forms["audience-form"]["session-name"].value;
-  // console.log("Session Name: ", sessionName);
-  socket.emit('joinSession', {
-    'name': sessionName,
-    'user': user.socketID
-  });
-  localStorage.setItem("sessionName", sessionName);
-  user.sessionName = sessionName;
-  return false;
-};
-
-function getSessions() {
-  socket.emit('getSessions', 'please');
 }
 
 function getRandomColor() {
@@ -199,6 +119,116 @@ function getRandomColor() {
   }
   return color;
 }
+
+function getSessions() {
+  socket.emit('getSessions', 'please');
+}
+
+socket.on('sessions', function (data) {
+  console.log("sessions data: ", data);
+  if (data.list) {
+    console.log("Session List: ", data.list);
+    // createUL(data.list);
+    createOpts(data.list);
+  }
+});
+
+
+
+socket.on('setSection', function (data) {
+  console.log("the section is now: " + data.title);
+});
+
+socket.on('chat', function (data) {
+  console.log("chat: " + data);
+});
+
+
+socket.on('audienceEnable', function (data) {
+  console.log('enabled? ', data);
+  dSound.audienceEnable(data);
+});
+
+
+/**********************************************
+REGISTRATION
+
+Let's try to keep events out of here and move them over to the individual .html files that they belong to.
+**********************************************/
+
+function registerWithServer() {
+  socket.emit('addme', {
+    name: "controller",
+    sessionName: user.sessionName,
+    corpus: user.corpus,
+    color: user.color
+  });
+}
+registerWithServer();
+
+
+function registerPoet(corpusName = 'horrortech-corpus') {
+  let sessionName = document.forms["poet-form"]["session-name"].value;
+  // let corpusName = document.forms["poet-form"]["corpus-name"].value;
+  console.log("Session Name: ", sessionName);
+  console.log("Corpus Name: ", corpusName);
+
+  socket.emit('registerSession', {
+    'username': user.name,
+    'sessionName': sessionName,
+    'corpus': corpusName,
+    'color': user.color,
+    'date': user.date
+  });
+  localStorage.setItem("sessionName", sessionName);
+  localStorage.setItem("corpus", corpusName);
+  localStorage.setItem("userColor", user.color);
+  user.sessionName = sessionName;
+  user.corpus = corpusName;
+  return false;
+};
+
+function registerAudience(sessionName) {
+  // let sessionName = document.forms["audience-form"]["session-name"].value || 'default';
+  console.log("Session Name: ", sessionName);
+  socket.emit('joinSession', {
+    'username': user.name,
+    'sessionName': sessionName,
+    'color': user.color,
+    'date': user.date
+  });
+  localStorage.setItem("sessionName", sessionName);
+  localStorage.setItem("userColor", user.color);
+  user.sessionName = sessionName;
+  return false;
+};
+
+function registerTheater() {
+  let sessionName = document.forms["audience-form"]["session-name"].value || 'default';
+  console.log("Session Name: ", sessionName);
+  socket.emit('joinSession', {
+    'username': user.name,
+    'sessionName': sessionName,
+    'color': user.color,
+    'date': user.date
+  });
+  localStorage.setItem("sessionName", sessionName);
+  localStorage.setItem("userColor", user.color);
+  user.sessionName = sessionName;
+  return false;
+};
+
+socket.on('registerComplete', function (data) {
+  console.log("registerComplete: " + data);
+  user.socketID = data.socketID;
+  localStorage.setItem("socketID", data.socketID);
+  if (data.corpus) {
+    user.corpus = data.corpus;
+    localStorage.setItem("corpus", data.corpus);
+  }
+});
+
+
 
 /**********************************************
 EVENTS
