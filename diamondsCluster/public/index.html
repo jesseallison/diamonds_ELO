@@ -33,13 +33,6 @@
 
     getSessions();
 
-    //   var x = document.getElementsByClassName("example");
-
-    //   var i;
-    // for (i = 0; i < x.length; i++) {
-    //   x[i].style.backgroundColor = "red";
-    // }
-
     let sessionSelectClass = document.getElementsByClassName("sessionSelect");
 
     for (let e of sessionSelectClass) {
@@ -52,8 +45,7 @@
 
     for (let e of sessionSelectClass) {
       e.addEventListener("change", function () {
-        let sel = sessionSelectClass;
-        let sessionName = sel.options[sel.selectedIndex].text;
+        let sessionName = e.options[e.selectedIndex].text;
         console.log("Session Submitted: ", sessionName);
         registerAudience(sessionName);
       });

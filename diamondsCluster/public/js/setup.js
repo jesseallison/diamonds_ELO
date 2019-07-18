@@ -104,17 +104,19 @@ function createOpts(sessionArray) {
 
   let selectArrayTheater = document.getElementById("theater").getElementsByClassName('sessionSelect');
 
-  let sessionNames = "";
-
-  for (let sessionItem of sessionArray) {
-    sessionNames += '<option name="session-name" value="/audience">' + sessionItem + '</option>';
-  }
-
   for (let selectItem of selectArrayAudience) {
+    let sessionNames = "";
+    for (let sessionItem of sessionArray) {
+      sessionNames += '<option name="session-name">' + sessionItem + '</option>';
+    }
     selectItem.innerHTML = audienceText + sessionNames;
   }
 
   for (let selectItem of selectArrayTheater) {
+    let sessionNames = "";
+    for (let sessionItem of sessionArray) {
+      sessionNames += '<option name="session-name">' + sessionItem + '</option>';
+    }
     selectItem.innerHTML = theaterText + sessionNames;
   }
 
