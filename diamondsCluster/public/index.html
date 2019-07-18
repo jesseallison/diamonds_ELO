@@ -22,35 +22,15 @@
       <h1>I am...</h1>
       <ul>
         <li><a href="/setup">poet</a></li>
-        <li id="audience"><select class="sessionSelect"></select></li>
-        <li id="theater"><select class="sessionSelect"></select></li>
+        <li id="audienceSelect"><select class="sessionSelect"></select></li>
+        <li id="theaterSelect"><select class="sessionSelect"></select></li>
         <li><a href="http://diamonds.emdm.io">curious</a></li>
       </ul>
     </nav>
   </main>
 
   <script>
-
     getSessions();
-
-    let sessionSelectClass = document.getElementsByClassName("sessionSelect");
-
-    for (let e of sessionSelectClass) {
-      e.onchange = function () {
-        if (this.selectedIndex !== 0) {
-          window.location.href = this.value;
-        }
-      };
-    }
-
-    for (let e of sessionSelectClass) {
-      e.addEventListener("change", function () {
-        let sessionName = e.options[e.selectedIndex].text;
-        console.log("Session Submitted: ", sessionName);
-        registerAudience(sessionName);
-      });
-    }
-
   </script>
 
 </body>

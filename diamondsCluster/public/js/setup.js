@@ -79,35 +79,47 @@ function actOnText() {
 
 }
 
-function createUL(array) {
-  let str = '<ul>'
+// function createUL(array) {
+//   let str = '<ul>'
 
-  array.forEach(function (slide) {
-    str += '<li>' + slide + '</li>';
-  });
+//   array.forEach(function (slide) {
+//     str += '<li>' + slide + '</li>';
+//   });
 
-  str += '</ul>';
+//   str += '</ul>';
 
-  let myEle = document.getElementById("session-list");
-  if (myEle) {
-    document.getElementById("session-list").innerHTML = str;
-  }
-}
+//   let myEle = document.getElementById("session-list");
+//   if (myEle) {
+//     document.getElementById("session-list").innerHTML = str;
+//   }
+// }
 
 function createOpts(sessionArray) {
 
-  let audienceText = '<option name="session-name" value="/audience">audience</option><option disabled>Choose a session:</option>';
+  let audienceText = '<option name="session-name">audience</option><option disabled>Choose a session:</option>';
 
-  let theaterText = '<option name="session-name" value="/theater">theater</option><option disabled>Choose a session:</option>';
+  let theaterText = '<option name="session-name">theater</option><option disabled>Choose a session:</option>';
 
-  let selectArrayAudience = document.getElementById("audience").getElementsByClassName('sessionSelect');
+  let poetText = '<option>Choose</option>';
 
-  let selectArrayTheater = document.getElementById("theater").getElementsByClassName('sessionSelect');
+  let selectArrayAudience = [], selectArrayTheater = [], selectArrayPoet = [];
+
+  if (document.getElementById("audienceSelect")) {
+    selectArrayAudience = document.getElementById("audienceSelect").getElementsByClassName('sessionSelect');
+  }
+
+  if (document.getElementById("theaterSelect")) {
+    selectArrayTheater = document.getElementById("theaterSelect").getElementsByClassName('sessionSelect');
+  }
+
+  if (document.getElementById("poetSelect")) {
+    selectArrayPoet = document.getElementById("poetSelect").getElementsByClassName('sessionSelect');
+  }
 
   for (let selectItem of selectArrayAudience) {
     let sessionNames = "";
     for (let sessionItem of sessionArray) {
-      sessionNames += '<option name="session-name">' + sessionItem + '</option>';
+      sessionNames += '<option value="/audience" name="session-name">' + sessionItem + '</option>';
     }
     selectItem.innerHTML = audienceText + sessionNames;
   }
@@ -115,9 +127,35 @@ function createOpts(sessionArray) {
   for (let selectItem of selectArrayTheater) {
     let sessionNames = "";
     for (let sessionItem of sessionArray) {
-      sessionNames += '<option name="session-name">' + sessionItem + '</option>';
+      sessionNames += '<option value="/theater" name="session-name">' + sessionItem + '</option>';
     }
     selectItem.innerHTML = theaterText + sessionNames;
+  }
+
+  for (let selectItem of selectArrayPoet) {
+    let sessionNames = "";
+    for (let sessionItem of sessionArray) {
+      sessionNames += '<option value="/poet" name="session-name">' + sessionItem + '</option>';
+    }
+    selectItem.innerHTML = poetText + sessionNames;
+  }
+
+  let sessionSelectClass = document.getElementsByClassName("sessionSelect");
+
+  for (let e of sessionSelectClass) {
+    e.onchange = function () {
+      if (this.selectedIndex !== 0) {
+        window.location.href = this.value;
+      }
+    };
+  }
+
+  for (let e of sessionSelectClass) {
+    e.addEventListener("change", function () {
+      let sessionName = e.options[e.selectedIndex].text;
+      console.log("Session Submitted: ", sessionName);
+      registerAudience(sessionName);
+    });
   }
 
 }
@@ -226,7 +264,7 @@ function registerTheater() {
 };
 
 socket.on('registerComplete', function (data) {
-  console.log("registerComplete: " + data);
+  console.log("registerComplete: ", data);
   user.socketID = data.socketID;
   localStorage.setItem("socketID", data.socketID);
   if (data.corpus) {

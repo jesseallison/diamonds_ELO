@@ -10,6 +10,7 @@ body {
   display: grid;
   grid-template-columns: 2fr 1fr 6fr 1fr;
   margin: 10px 10px 50px 10px;
+  max-width: 1440px;
 }
 
 a {
@@ -118,9 +119,14 @@ main {
   h2 {
     font-size: 60px;
  }
+
+  .button {
+    font-size: 25px !important;
+  }
+
 }
 
-a.button {
+.button {
   display:block;
   margin:10px auto;
   padding:15px 1.2em;
@@ -156,6 +162,14 @@ a.button {
   background-image: linear-gradient(-45deg, rgb(207, 6, 117), rgb(250, 58, 58));
 }
 
+.d4 {
+  background-image: linear-gradient(-45deg, rgb(206, 190, 52), rgb(77, 224, 180));
+}
+
+.d4:active {
+  background-image: linear-gradient(-45deg, rgb(207, 6, 117), rgb(250, 58, 58));
+}
+
 h3 {
   font-size: 2vw;
 }
@@ -173,4 +187,24 @@ h3 {
   background-color: transparent; 
   font-size: calc(14px + 6.5vw);
   width: 100%;
+}
+
+#poetSelect>.sessionSelect {
+  color:#fff;
+  font-size: calc(10px + 1vw);
+  font-weight: bold !important;
+  text-align: center;
+  text-align-last: center;
+}
+
+.chosen{
+  color: #fff;
+  background-color: #707070;
+}
+
+.chosen2 {
+    /* color:#fff; */
+    background-color: #707070;
+    background-image: none;
+
 }

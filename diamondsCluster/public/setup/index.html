@@ -18,25 +18,28 @@
 <body>
   <header><a href="/"><img src="/images/logo_side.png"></a></header>
   <main>
-    <!-- <h2>Current Sessions</h2>
-    <p>Sessions that have been made previously will appear here. Click one to go back into its controller view. If there's nothing just create a new session below.</p>
-    <div id="session-list"></div> -->
+
     <h2>New Session</h2>
-    <form name="poet-form" onsubmit="return registerPoet()">
-      <input onClick="this.setSelectionRange(0, this.value.length)" id="input_val" type="text" name="session-name">
+    <form id="poetCreateSession" name="poet-form" onsubmit="return registerPoet()">
+      <input id="input_val" type="text" name="session-name">
       <input type="submit" value="Create">
     </form>
-    <h2>Corpus</h2>
-    <a class="button d1" onclick="registerPoet('horrotech-corpus')" href="#">horrotech</a>
-    <a class="button d1" onclick="registerPoet('lilghettoqueer-corpus')" href="#">lilghettoqueer</a>
-    <a class="button d1" onclick="registerPoet('melanwormy-corpus')" href="#">melanwormy</a>
-    <a class="button d1" onclick="registerPoet('mythrimony-corpus')" href="#">mythrimony</a>
-    <a class="button d1" onclick="registerPoet('orbitopera-corpus')" href="#">orbitopera</a>
-    <a class="button d1" onclick="registerPoet('rivergation-corpus')" href="#">rivergation</a>
 
-    <h2>Or load your own</h2>
-    <a class="button d2" href="#">Seed</a>
-    <a class="button d2" href="#">Corpus</a>
+    <h3>Or join an existing session...</h3>
+    <div class="button d4" id="poetSelect">
+      <select class="sessionSelect"></select>
+    </div>
+    <h2>Corpus</h2>
+    <a class="button d1" onclick="registerPoet('horrotech-corpus')" href="#!">horrotech</a>
+    <a class="button d1" onclick="registerPoet('lilghettoqueer-corpus')" href="#!">lilghettoqueer</a>
+    <a class="button d1" onclick="registerPoet('melanwormy-corpus')" href="#!">melanwormy</a>
+    <a class="button d1" onclick="registerPoet('mythrimony-corpus')" href="#!">mythrimony</a>
+    <a class="button d1" onclick="registerPoet('orbitopera-corpus')" href="#!">orbitopera</a>
+    <a class="button d1" onclick="registerPoet('rivergation-corpus')" href="#!">rivergation</a>
+
+    <h3>Or load your own...</h3>
+    <a class="button d2" href="#!">Seed</a>
+    <a class="button d2" href="#!">Corpus</a>
 
     <h2>Ready to perform?</h2>
     <a class="button d3" href="/poet">Launch Controller View</a>
@@ -60,7 +63,22 @@
   </main>
   <script src="/js/namesgenerator.js"></script>
   <script>
+    getSessions();
+
     document.getElementById("input_val").value = unique_name;
+
+    document.getElementById("poetCreateSession").addEventListener("submit", function () {
+      document.getElementById("input_val").classList.toggle("chosen");
+
+      document.getElementById("input_val").setAttribute("readonly", "");
+    })
+
+    for (let e of document.getElementsByClassName("d1")) {
+      e.addEventListener("click", function () {
+        e.classList.toggle("chosen2");
+      })
+    }
+
   </script>
 </body>
 
