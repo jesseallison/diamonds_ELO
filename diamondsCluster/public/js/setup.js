@@ -94,21 +94,30 @@ function createUL(array) {
   }
 }
 
-function createOpts(array) {
+function createOpts(sessionArray) {
 
-  let audText = '<option name="session-name" value="/audience">audience</option><option disabled>Choose a session:</option>';
+  let audienceText = '<option name="session-name" value="/audience">audience</option><option disabled>Choose a session:</option>';
 
-  let sel = document.getElementById('sessionSelect');
-  if (sel) {
-    let sessionName;
-    // let sessionName = sel.innerHTML;
-    // let sessionName = sel.options[sel.selectedIndex].text;
+  let theaterText = '<option name="session-name" value="/theater">theater</option><option disabled>Choose a session:</option>';
 
-    array.forEach(function (item) {
-      sessionName += '<option name="session-name" value="/audience">' + item + '</option>';
-    });
-    sel.innerHTML = audText + sessionName;
+  let selectArrayAudience = document.getElementById("audience").getElementsByClassName('sessionSelect');
+
+  let selectArrayTheater = document.getElementById("theater").getElementsByClassName('sessionSelect');
+
+  let sessionNames = "";
+
+  for (let sessionItem of sessionArray) {
+    sessionNames += '<option name="session-name" value="/audience">' + sessionItem + '</option>';
   }
+
+  for (let selectItem of selectArrayAudience) {
+    selectItem.innerHTML = audienceText + sessionNames;
+  }
+
+  for (let selectItem of selectArrayTheater) {
+    selectItem.innerHTML = theaterText + sessionNames;
+  }
+
 }
 
 function getRandomColor() {
@@ -125,15 +134,13 @@ function getSessions() {
 }
 
 socket.on('sessions', function (data) {
-  console.log("sessions data: ", data);
+  console.log("Sessions Data: ", data);
   if (data.list) {
-    console.log("Session List: ", data.list);
+    // console.log("Session List: ", data.list);
     // createUL(data.list);
     createOpts(data.list);
   }
 });
-
-
 
 socket.on('setSection', function (data) {
   console.log("the section is now: " + data.title);
@@ -152,8 +159,6 @@ socket.on('audienceEnable', function (data) {
 
 /**********************************************
 REGISTRATION
-
-Let's try to keep events out of here and move them over to the individual .html files that they belong to.
 **********************************************/
 
 function registerWithServer() {
@@ -227,23 +232,3 @@ socket.on('registerComplete', function (data) {
     localStorage.setItem("corpus", data.corpus);
   }
 });
-
-
-
-/**********************************************
-EVENTS
-
-Let's try to keep events out of here and move them over to the individual .html files that they belong to.
-**********************************************/
-
-// $('.scoreText').click(function (e) {
-//   target = event.target || event.srcElement;
-
-//   if (target.nodeName.toLowerCase() === "span") {
-//     var text = $(e.target).text();
-
-//     $(e.target)[0].style.backgroundColor = user.color;
-//     dSound.speak(text);
-//     socket.emit('item', text);
-//   }
-// });

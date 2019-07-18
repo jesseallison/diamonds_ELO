@@ -165,7 +165,7 @@ h3 {
   list-style-type: none;
 }
 
-#sessionSelect {
+.sessionSelect {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;

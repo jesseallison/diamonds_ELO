@@ -3,25 +3,26 @@
 ## TODO
 
 **Now**
-- [ ] Add session chooser to "I am theater" link from portal
-- [ ] simplify the sesssion chooser
-- [ ] update the poet controller UI
-- [ ] Add audio event for each of the controller buttons, possibly tied to each corpus
-- [ ] Add sessionName verification for each of the audio events
+- [ ] (Derick)Add session chooser to "I am theater" link from portal
+- [ ] (Derick)Add session chooser to "I am poet" at the top in case poet needs to rejoin session
+- [ ] (Derick) update the poet controller UI
+- [ ] (Jesse) Add audio event for each of the controller buttons, possibly tied to each corpus
+- [ ] (Jesse) Add sessionName verification for each of the audio events
 
 **Soon**
 - [ ] Allow poet to load in their own poem and corpus
 - [ ] Add random selection of corpus segments if not enough return.
-- [ ] why does loadtext-ish take so long
+- [ ] (Jesse) hy does loadtext-ish take so long?
 
 **Later**
 - [ ] Create interface for poet to be able to choose different pairings from seeds and corpora
-- [ ] use socet.io rooms/groups to tie session user together – Right now they simply append -sessionName to the controller, theater, etc. and store them as separate ids.  This works quite well so far for the unique pages. Should probably keep even after moving to rooms/groups.
+- [ ] use socket.io rooms/groups to tie session user together – Right now they simply append -sessionName to the controller, theater, etc. and store them as separate ids.  This works quite well so far for the unique pages. Should probably keep even after moving to rooms/groups.
 
 **Maybe**
 - [ ] Replace markov with machine learning
 
 **Done**
+- [x] simplify the sesssion chooser
 - [x] Fix up corpii corpus files.  lilghettoqueer-corpus is functional, but the others cause failure.  probs bad syntax
 - [x] Create new portal for audience to find performance currently running
 - [x] Update the /data/seeds/xxxx/seed.html files to whatever they need to be to load in the browser properly.
