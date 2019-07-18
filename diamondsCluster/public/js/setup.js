@@ -14,19 +14,22 @@ var socket = io.connect(window.location.origin, {
 });
 // var socket = io.connect('https://atlab.cct.lsu.edu/', { path: '/causeway/socket.io' });
 
-// seatMap.addEventListener("click", getClickPosition, false);
+// It is referenced by 3(soon to be 2) files:
 
-// $(function () {
-function actOnText() {
-  var contents = $('.scoreText').text().split(" "),
-    modText = '';
+//   -/sessions/audience.html -
+//   /sessions/theater.html -
+//   /setup/index.html
 
-  for (var i = 0; i < contents.length; i++) {
-    modText += '<span>' + contents[i] + '</span> ';
-  }
+//   *
+//   /
 
-  $('.scoreText').html(modText);
+/**********************************************
+VARIABLES
+**********************************************/
 
+let user = {
+  'name': 'a_user',
+  'id': 1000
 }
 
 $('.scoreText').click(function(e) {
@@ -45,10 +48,7 @@ $('.scoreText').click(function(e) {
 });
 
 
-// **********************************************************
-// **********************************************************
-// Nexus Stuff
-// **********************************************************
+var myLocation = [0.5, 0.5]; // Default centered
 
 function registerWithServer() {
   socket.emit('addme', {
@@ -60,8 +60,6 @@ function registerWithServer() {
 }
 registerWithServer();
 
-// **********************************************************
-// Only for the Overlay/intro page
 
 function registerPoet(corpusName = 'horrortech-corpus') {
   let sessionName = document.forms["poet-form"]["session-name"].value;
@@ -127,14 +125,15 @@ socket.on('registerComplete', function(data) {
 socket.on('sessions', function(data) {
   console.log("sessions data: ", data);
   if (data.list) {
-    console.log("Session list: ", data.list);
-    createUL(data.list);
+    console.log("Session List: ", data.list);
+    // createUL(data.list);
+    createOpts(data.list);
   }
 });
 
-function getSessions() {
-  socket.emit('getSessions', 'please');
-}
+socket.on('setSection', function(data) {
+  console.log("the section is now: " + data.title);
+});
 
 socket.on('chat', function(data) {
   console.log("chat: " + data);
@@ -147,6 +146,9 @@ socket.on('audienceEnable', function(data) {
 });
 
 
+/**********************************************
+FUNCTIONS
+**********************************************/
 
 function getRandomColor() {
   var letters = '0123456789ABCDEF'.split('');
@@ -166,8 +168,20 @@ meSpeak.loadVoice('/js/mespeak/voices/' + speakVoice + '.json');
 
 var dSound = new DiamondSound();
 
+function actOnText() {
+  var contents = $('.scoreText').text().split(" "),
+    modText = '';
+
+  for (var i = 0; i < contents.length; i++) {
+    modText += '<span>' + contents[i] + '</span> ';
+  }
+
+  $('.scoreText').html(modText);
+
+}
+
 function createUL(array) {
-  var str = '<ul>'
+  let str = '<ul>'
 
   array.forEach(function(slide) {
     str += '<li>' + slide + '</li>';
@@ -175,8 +189,53 @@ function createUL(array) {
 
   str += '</ul>';
 
-  var myEle = document.getElementById("session-list");
+  let myEle = document.getElementById("session-list");
   if (myEle) {
     document.getElementById("session-list").innerHTML = str;
   }
 }
+
+function createOpts(array) {
+  // let sel = document.getElementById("sessionSelect");
+  // let sessionName = selectEle.innerHTML;
+
+  let audText = '<option name="session-name" value="/audience">audience</option><option disabled>Choose a session:</option>';
+
+  let sel = document.getElementById('sessionSelect');
+  if (sel) {
+    // let sessionName = sel.options[sel.selectedIndex].text;
+    let sessionName = sel.innerHTML;
+
+    array.forEach(function(item) {
+      sessionName += '<option name="session-name" value="/audience">' + item + '</option>';
+    });
+    // console.log("sel.innerHTML", sel.innerHTML);
+    sel.innerHTML = audText + sessionName;
+  }
+}
+
+
+
+
+
+function getSessions() {
+  socket.emit('getSessions', 'please');
+}
+
+/**********************************************
+EVENTS
+
+Let's try to keep events out of here and move them over to the individual .html files that they belong to.
+**********************************************/
+
+// $('.scoreText').click(function (e) {
+//   target = event.target || event.srcElement;
+
+//   if (target.nodeName.toLowerCase() === "span") {
+//     var text = $(e.target).text();
+
+//     $(e.target)[0].style.backgroundColor = user.color;
+//     dSound.speak(text);
+//     socket.emit('item', text);
+//   }
+// });

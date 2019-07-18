@@ -42,7 +42,7 @@ h1 {
 }
 
 nav h1,li {
-  font-size: calc(16px + 6.5vmax);
+  font-size: calc(14px + 6.5vw);
 }
 
 nav li {
@@ -163,4 +163,14 @@ h3 {
 #session-list>ul>li {
   font-size: calc(10px + 1vw);
   list-style-type: none;
+}
+
+#sessionSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  background-color: transparent; 
+  font-size: calc(14px + 6.5vw);
+  width: 100%;
 }
