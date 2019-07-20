@@ -293,12 +293,13 @@ if (cluster.isMaster) {
               io.to(controllerID).emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
             }
           });
-          redisClient.get('theaterID-' + socket.sessionName, function(err, reply) {
-            let theaterID = reply;
-            if (theaterID) {
-              io.to(theaterID).emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
-            }
-          });
+          // Use for Single Unique Theater 
+          // redisClient.get('theaterID-' + socket.sessionName, function(err, reply) {
+          //   let theaterID = reply;
+          //   if (theaterID) {
+          //     io.to(theaterID).emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
+          //   }
+          // });
 
           redisClient.get('installationID-' + socket.sessionName, function(err, reply) {
             let installationID = reply;
@@ -609,13 +610,19 @@ if (cluster.isMaster) {
 
       redisClient.lpush("generatedPoem", data.phrase);
 
-      redisClient.get('theaterID-' + socket.sessionName, function(err, reply) {
-        let theaterID = reply;
-        if (theaterID) {
-          data.sessionName = socket.sessionName;
-          io.to(theaterID).emit('selectedPhrase', data);
-        }
-      });
+      // All Theaters
+
+      data.sessionName = socket.sessionName;
+      socket.broadcast.emit('selectedPhrase', data);
+
+      // Only the one theater
+      // redisClient.get('theaterID-' + socket.sessionName, function(err, reply) {
+      //   let theaterID = reply;
+      //   if (theaterID) {
+      //     data.sessionName = socket.sessionName;
+      //     io.to(theaterID).emit('selectedPhrase', data);
+      //   }
+      // });
 
       redisClient.get('installationID-' + socket.sessionName, function(err, reply) {
         let installationID = reply;
