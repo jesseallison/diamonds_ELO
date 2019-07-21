@@ -6,6 +6,10 @@ services:
     image: redis:5  
     expose:
       - "6379"
+    networks:
+      comm:
+        aliases:
+          - redis_db
   
   node:
     image: node:12
@@ -13,10 +17,15 @@ services:
     working_dir: /home/node/app
     environment:
       - NODE_ENV=production
-      - REDISIP=diamonds_elo_redis_1
+      - REDISIP=redis_db
       - PORT=8080 
     volumes:
       - ./diamondsCluster:/home/node/app
     ports:
       - "8001:8080"
     command: npm start
+    networks:
+      - comm
+
+networks:
+  comm:

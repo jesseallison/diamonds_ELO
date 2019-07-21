@@ -142,7 +142,7 @@ socket.on('itemback', function (data) {
 
     console.log(userbars);
 
-    document.getElementsByClassName('sw')[0].style.display = "none";
+    // document.getElementsByClassName('sw')[0].style.display = "none";
 
     // setTimeout(function() {alert('hello');},1250);
     // console.log("readsd");
