@@ -113,7 +113,11 @@ function draw1() {
 // }
 var newDivBar;
 var w1 = 10;
+
 socket.on('itemback', function (data) {
+
+  console.log("somethingBack", data.sessionName);
+
   if (data.sessionName == user.sessionName) {
     if (userbars[data.color] > 0) {
       userbars[data.color] = userbars[data.color] + 1
@@ -189,6 +193,7 @@ socket.on('itemback', function (data) {
 
 socket.on('selectedPhrase', function (data) {
   console.log("New Phrase: " + data.phrase);
+  document.getElementsByClassName('sw')[0].style.display = "none";
   if (data.sessionName == user.sessionName) {
     document.getElementsByClassName('newgentext')[0].innerHTML = data.phrase;
     var newgentext = document.getElementsByClassName('newgentext')[0];
