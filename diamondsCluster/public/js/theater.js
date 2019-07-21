@@ -62,7 +62,7 @@ function joinSession() {
 // Only for the Overlay/intro page
 
 socket.on('registerComplete', function (data) {
-  console.log("registerComplete: " + data);
+  console.log("registerComplete: ", data);
   user.socketID = data.socketID;
   localStorage.setItem("socketID", data.socketID);
   if (data.corpus) {
@@ -116,7 +116,7 @@ var w1 = 10;
 
 socket.on('itemback', function (data) {
 
-  console.log("somethingBack", data.sessionName);
+  console.log("somethingBack", data);
 
   if (data.sessionName == user.sessionName) {
     if (userbars[data.color] > 0) {

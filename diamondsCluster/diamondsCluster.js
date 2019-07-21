@@ -284,11 +284,12 @@ if (cluster.isMaster) {
         console.log("*** Generated Text ***\n", generatedText);
         // Save generated sentances into redis.
         if (generatedText) {
-          console.log("*** TEST ***\n", generatedText);
-
           redisClient.lpush("markov", generatedText);
           // Send generated sentances to EVERYONE  FIXME: Should this only be a few people?
-          socket.emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
+
+          // socket.emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
+          socket.broadcast.emit('itemback', { phrase: generatedText, color: socket.userColor, sessionName: socket.sessionName });
+
           redisClient.get('controllerID-' + socket.sessionName, function (err, reply) {
             let controllerID = reply;
             if (controllerID) {
