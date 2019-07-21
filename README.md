@@ -3,13 +3,12 @@
 ## TODO
 
 **Now**
-- [ ] (Derick)Add session chooser to "I am theater" link from portal
-- [ ] (Derick)Add session chooser to "I am poet" at the top in case poet needs to rejoin session
 - [ ] (Derick) update the poet controller UI
 - [ ] (Jesse) Add audio event for each of the controller buttons, possibly tied to each corpus
 - [ ] (Jesse) Add sessionName verification for each of the audio events
 
 **Soon**
+- [ ] Make sure sessions are actually cleared after 60 minutes.
 - [ ] Allow poet to load in their own poem and corpus
 - [ ] Add random selection of corpus segments if not enough return.
 - [ ] (Jesse) hy does loadtext-ish take so long?
@@ -22,6 +21,8 @@
 - [ ] Replace markov with machine learning
 
 **Done**
+- [x] (Derick)Add session chooser to "I am theater" link from portal
+- [x] (Derick)Add session chooser to "I am poet" at the top in case poet needs to rejoin session
 - [x] simplify the sesssion chooser
 - [x] Fix up corpii corpus files.  lilghettoqueer-corpus is functional, but the others cause failure.  probs bad syntax
 - [x] Create new portal for audience to find performance currently running
