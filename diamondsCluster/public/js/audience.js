@@ -94,7 +94,7 @@ function actOnText() {
 
 }
 
-$('.scoreText').click(function (e) {
+$('.scoreText').click(function(e) {
   target = event.target || event.srcElement;
 
   if (target.nodeName.toLowerCase() === "span") {
@@ -127,7 +127,7 @@ $('.scoreText').click(function (e) {
 // 	elements[0].style.backgroundColor = myColor;
 // }
 
-window.onload = function () {
+window.onload = function() {
   registerWithServer();
   joinSession();
 }
@@ -161,7 +161,7 @@ function putInText(seedPath = "/data/score.txt") {
 
   console.log("seedPath", seedPath);
   xhr.open('GET', seedPath, true);
-  xhr.onreadystatechange = function () {
+  xhr.onreadystatechange = function() {
     if (this.readyState !== 4) return;
     if (this.status !== 200) return;
     var scoreText = document.getElementsByClassName("scoreText")[0];
@@ -187,7 +187,7 @@ function putInText(seedPath = "/data/score.txt") {
 
 };
 
-$(window).resize(function () {
+$(window).resize(function() {
   // document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + myColor;
   // console.log("resized");
 });
@@ -234,7 +234,7 @@ function joinSession() {
 // **********************************************************
 // Only for the Overlay/intro page
 
-socket.on('registerComplete', function (data) {
+socket.on('registerComplete', function(data) {
   console.log("registerComplete: " + data);
   user.socketID = data.socketID;
   localStorage.setItem("socketID", data.socketID);
@@ -244,7 +244,7 @@ socket.on('registerComplete', function (data) {
   }
 });
 
-socket.on('setSection', function (data) {
+socket.on('setSection', function(data) {
   // console.log(data);
   console.log("the section is now: " + data.title);
 });
@@ -253,7 +253,7 @@ socket.on('setSection', function (data) {
 
 // Add Chords, Progression, feedback, comb filtering, shimmer!
 
-socket.on('itemback', function (data) {
+socket.on('itemback', function(data) {
   console.log("itembackk: ", data);
   if (data.sessionName == user.sessionName) {
     var elements = document.getElementsByClassName("gentext")[0];
@@ -264,70 +264,76 @@ socket.on('itemback', function (data) {
 });
 
 
-socket.on('audienceEnable', function (data) {
+socket.on('audienceEnable', function(data) {
   console.log('enabled? ', data);
   dSound.audienceEnable(data);
 });
 
 
-socket.on('start', function (data) {
+socket.on('start', function(data) {
   console.log("Start: ", data);
+  dSound.audienceEnable(1);
   dSound.speak("So it begins...");
+  dSound.playerBackground.start();
 });
 
-socket.on('excite', function (data) {
+socket.on('excite', function(data) {
   if (generatedTexts.length > 0) {
     dSound.speak(generatedTexts[generatedTexts.length - 1]);
+    dSound.triggerGarble();
   }
 });
 
-socket.on('echo', function (data) {
+socket.on('echo', function(data) {
   console.log("Echo: ", data.phrase);
   dSound.speak(data.phrase);
 });
 
-socket.on('kill', function (data) {
+socket.on('kill', function(data) {
   console.log("Kill: ", data);
   dSound.speak('die');
+  dSound.playKepler();
 });
 
-socket.on('volta', function (data) {
+socket.on('volta', function(data) {
   console.log("Volta: ", data);
   dSound.playRandomMelody(9, '2n', '16n', 0.15);
   dSound.speak('Umm, volta, yeah.');
 });
 
-socket.on('end', function (data) {
+socket.on('end', function(data) {
   console.log("End: ", data);
   dSound.speak('Thank you.');
+  dSound.playerBackground.stop();
+  dSound.audienceEnable(0);
 });
 
 
-socket.on('playChord', function (data) {
+socket.on('playChord', function(data) {
   dSound.playChord(data.notes, data.duration);
 });
 
-socket.on('sustainChord', function (data) {
+socket.on('sustainChord', function(data) {
   dSound.playChord(data.notes, data.duration);
 });
 
-socket.on('triggerBeginning', function (data) {
+socket.on('triggerBeginning', function(data) {
   dSound.playKepler();
 });
 
-socket.on('nextChord', function (data) {
+socket.on('nextChord', function(data) {
   dSound.nextChord();
 });
 
-socket.on('triggerUtopalypse', function (data) {
+socket.on('triggerUtopalypse', function(data) {
   dSound.playUtopalypse();
 });
 
-socket.on('triggerDiamonds', function (data) {
+socket.on('triggerDiamonds', function(data) {
   dSound.playDiamonds();
 });
 
-socket.on('triggerEnding', function (data) {
+socket.on('triggerEnding', function(data) {
   dSound.playEnding();
 });
 

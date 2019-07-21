@@ -10,13 +10,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script type="text/javascript" src="/js/mespeak/mespeak.full.min.js"></script>
   <script type="text/javascript" src="/js/Tone.js"></script>
+  <script type="text/javascript" src="/js/tune.js"></script>
+  <script type="text/javascript" src="/js/teoria.js"></script>
+  <script type="text/javascript" src="/js/nxMusic.js"></script>
   <script type="text/javascript" src="/js/DiamondSound.js"></script>
   <script src="/js/setup.js"></script>
 </head>
 <html>
 
 <body>
-  <header><a href="/"><img src="/images/logo_side.png"></a></header>
+  <header>
+    <a href="/"><img src="/images/logo_side.png"></a>
+  </header>
   <main>
 
     <h2>New Session</h2>
@@ -47,17 +52,23 @@
 
     <h2>Descriptions</h2>
     <section>
-      <p><b>horrortech</b> corpus recombines text from the screenplays of Halloween and Jacob’s Ladder combined with President Obama’s May 23, 2013 speech on national security and drone warfare. Its seed, “The Blinking Red Light” is written by Christopher Shipman from <em>The Movie My Murderer Makes: Season II</em> (The Cupboard, 2018).</p>
+      <p><b>horrortech</b> corpus recombines text from the screenplays of Halloween and Jacob’s Ladder combined with President Obama’s May 23, 2013 speech on national security and drone warfare. Its seed, “The Blinking Red Light” is written by Christopher
+        Shipman from <em>The Movie My Murderer Makes: Season II</em> (The Cupboard, 2018).</p>
 
       <p><b>lilghettoqueer</b> corpus recombines text from Robert Cortes Holliday’s Turns About Town and W. E. B. Du Bois’ The Souls of Black Folk. Its seed,“Bitch Tendencies” is written by Kenyatta Jean-Paul García.</p>
 
-      <p><b>melanwormy</b> corpus recombines text from Bram Stoker’s The Lair of the White Worm (The Garden of Evil) and the International Helminth Genomes Consortium’s “Comparative Genomics of the Major Parasitic Worms,” and various articles from psychology publications on depression and anti-depressants. Its seed, “ON THE DAYS THERE IS ALMOST NOTHING TO BE HOPEFUL FOR I HAVE NOTHING TO BE HOPEFUL FOR” is written Jenn Marie Nunes from <em>EVERYTHING IS / TERRIBLE BUT / I LOVE YOU</em> (The Magnificent Field, 2018).</p>
+      <p><b>melanwormy</b> corpus recombines text from Bram Stoker’s The Lair of the White Worm (The Garden of Evil) and the International Helminth Genomes Consortium’s “Comparative Genomics of the Major Parasitic Worms,” and various articles from psychology
+        publications on depression and anti-depressants. Its seed, “ON THE DAYS THERE IS ALMOST NOTHING TO BE HOPEFUL FOR I HAVE NOTHING TO BE HOPEFUL FOR” is written Jenn Marie Nunes from <em>EVERYTHING IS / TERRIBLE BUT / I LOVE YOU</em> (The Magnificent
+        Field, 2018).</p>
 
-      <p><b>mythrimony</b> corpus recombines text from popular wedding vows, Biblical verses related to marriage, and Charles Gould’s Mythical Monsters. Its seed, “Eyes Bottle You” is written by Vincent A. Cellucci from <em>An Easy Place / To Die</em> (City Lit, 2011).</p>
+      <p><b>mythrimony</b> corpus recombines text from popular wedding vows, Biblical verses related to marriage, and Charles Gould’s Mythical Monsters. Its seed, “Eyes Bottle You” is written by Vincent A. Cellucci from <em>An Easy Place / To Die</em> (City
+        Lit, 2011).</p>
 
-      <p><b>orbitopera</b> corpus recombines text from the Challenger's operational recorder, transcripts from the Apollo 11 moonwalk, and English translations of lyrics from a wide array of operas. Its seed, “crash the sun emerges” is written by Vincent A. Cellucci from <em>Absence Like Sun</em> (Lavender Ink, 2019).</p>
+      <p><b>orbitopera</b> corpus recombines text from the Challenger's operational recorder, transcripts from the Apollo 11 moonwalk, and English translations of lyrics from a wide array of operas. Its seed, “crash the sun emerges” is written by Vincent
+        A. Cellucci from <em>Absence Like Sun</em> (Lavender Ink, 2019).</p>
 
-      <p><b>rivergration</b> corpus recombines text from John McPhee's The Control of Nature, articles on the U.S. Army Corps of Engineers and the national levee system, the U.S. Constitution, and recent U.S. Immigration and Customs Enforcement reports and briefings. Its seed, “midnight revealed the words I reserved for you” is written by Debangana Banerjee and translated by the author & Vincent A. Cellucci from <em>Matwaalla Anthology of Poetry from South Asia</em>, 2019.</p>
+      <p><b>rivergration</b> corpus recombines text from John McPhee's The Control of Nature, articles on the U.S. Army Corps of Engineers and the national levee system, the U.S. Constitution, and recent U.S. Immigration and Customs Enforcement reports and
+        briefings. Its seed, “midnight revealed the words I reserved for you” is written by Debangana Banerjee and translated by the author & Vincent A. Cellucci from <em>Matwaalla Anthology of Poetry from South Asia</em>, 2019.</p>
 
     </section>
   </main>
@@ -67,18 +78,17 @@
 
     document.getElementById("input_val").value = unique_name;
 
-    document.getElementById("poetCreateSession").addEventListener("submit", function () {
+    document.getElementById("poetCreateSession").addEventListener("submit", function() {
       document.getElementById("input_val").classList.toggle("chosen");
 
       document.getElementById("input_val").setAttribute("readonly", "");
     })
 
     for (let e of document.getElementsByClassName("d1")) {
-      e.addEventListener("click", function () {
+      e.addEventListener("click", function() {
         e.classList.toggle("chosen2");
       })
     }
-
   </script>
 </body>
 

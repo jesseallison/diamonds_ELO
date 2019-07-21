@@ -1,12 +1,15 @@
 var DiamondSound = function() {
   this.tone = new Tone();
 
-  this.pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+  //this.pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+  this.pitchCollection = [56, 58, 60, 62, 63, 65, 67, 68, 69, 70, 72, 74, 76, 77, 79, 81, 83, 84];
+
   this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
 
   this.chord = [68, 71, 75];
   this.chordRange = { low: -12, high: 12 };
   this.chordLength = '1m';
+  this.count = 10;
 
   this.gainMaster = new Tone.Volume().toMaster();
 
@@ -31,7 +34,7 @@ var DiamondSound = function() {
   }).connect(this.tremolo);
 
   this.chordSynth = new Tone.PolySynth(4, Tone.DuoSynth).connect(this.gainMaster);
-  this.chordVolume = -40;
+  this.chordVolume = -30;
   this.chordSynth.set("volume", this.chordVolume);
   this.chordSynth.set('vibratoAmount', 0.5);
   this.chordSynth.set('vibratoRate', 5);
@@ -39,12 +42,28 @@ var DiamondSound = function() {
   //set the attributes using the set interface
   // synth.set("detune", -1200);
 
+  // Create a new Tune object
+  this.tune = new Tune();
+  // Load a 12 tone just intonation scale
+  this.tune.loadScale('ji_12');
+  // Set the output mode to 'MIDI' 
+  this.tune.mode.output = 'MIDI';
+  this.tune.key = 69;
+  this.samp = new Tone.Sampler({ 'c4': "/data/c4.mp3" });
+  this.samp.volume.value = -6;
+  this.samp.connect(this.gainMaster);
+
+  this.readingRatio = 0.4; // limiting the number of times you read the current text.
+
+  this.playerBackground = new Tone.Player("/data/diamond_background.mp3").connect(this.gainMaster);
 
   this.playerUtopalypse = new Tone.Player("/data/Utopalypse.mp3").connect(this.gainMaster);
   this.playerDiamonds = new Tone.Player("/data/diamonds_in_distopia.mp3").connect(this.gainMaster);
   this.playerKepler = new Tone.Player("/data/Kepler_Star.mp3").connect(this.gainMaster);
   this.playerKepler.retrigger = 1;
   this.playerEnding = new Tone.Player("/data/Ending_for_a_minute.mp3").connect(this.gainMaster);
+
+  this.playerBackground.volume.value = -12;
 
 
   //this.gainy = new Tone.Gain().connect(this.gainMaster);
@@ -57,7 +76,7 @@ var DiamondSound = function() {
   // this.ns = new Tone.Noise('pink').connect(this.filt);
   //this.gainy.gain.value = 10.;
 
-  this.synth.triggerAttackRelease("C4", "8n", {}, 0.25);
+  this.synth.triggerAttackRelease("C4", "8n", '+0', 0.25);
 
   meSpeak.setAudioContext(this.tone.context);
   meSpeak.speakToNode(this.filt);
@@ -65,20 +84,32 @@ var DiamondSound = function() {
   // meSpeak.speak('Diamonds');
   // }
 
+  // Anything that needs to be done after the buffers have loaded...
+  Tone.Buffer.on('load', function() {
+    //document.getElementById('loading').style.display = 'none';
+    console.log("All Audio Buffers Loaded ********");
+  });
 }
 
 DiamondSound.prototype.audienceEnable = function(enabled) {
   console.log('enabled? ', enabled);
   if (enabled) {
     // this.gainMaster.volume.mute = false;
-    this.gainMaster.volume.val = 0.;
+    this.gainMaster.volume.value = 0.;
     this.chordSynth.set("volume", this.chordVolume);
   } else {
     // this.gainMaster.volume.mute = true;
-    this.gainMaster.volume.val = -96;
+    this.gainMaster.volume.value = -96;
     this.chordSynth.set("volume", -96);
   }
 }
+
+DiamondSound.prototype.phrygian = function(midi) {
+  return teoria.note.fromMIDI(midi);
+}
+
+
+// ********* Synthesis playing ********
 
 DiamondSound.prototype.playPitch = function() {
   this.synth.triggerAttackRelease(this.mtof(this.pitch + 12), 5);
@@ -177,16 +208,45 @@ DiamondSound.prototype.triggerDiamonds = function() {
 };
 
 DiamondSound.prototype.speak = function(text) {
-  // this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-  // var freq = Tone.Midi(this.pitch + 12).toFrequency();
-  // this.filt.frequency.value = (freq);
-  // //this.filt2.frequency.value = (freq);
-  // var rate = Math.floor(Math.random() * (12.) + 4.);
-  // this.tremolo.frequency.value = freq;
+  this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+  var freq = Tone.Midi(this.pitch + 12).toFrequency();
+  this.filt.frequency.value = (freq);
+  //this.filt2.frequency.value = (freq);
+  var rate = Math.floor(Math.random() * (12.) + 4.);
+  this.tremolo.frequency.value = freq;
 
   // check for safety - iOS will fail if you try to say something and can't
   if (meSpeak.isConfigLoaded() && meSpeak.isVoiceLoaded(speakVoice)) {
     meSpeak.speak(text);
   }
-  // this.synth.triggerAttackRelease(freq, "4n", {}, 0.15);
+  this.synth.triggerAttackRelease(freq, "2n", '+0', 0.15);
+};
+
+DiamondSound.prototype.triggerGarble = function() {
+  this.count = 10;
+  // this.filterGarble();
+  for (let i = 0; i < this.count; i++) {
+    setTimeout(this.filterGarble.bind(this), i * 100);
+  }
+
+}
+
+DiamondSound.prototype.filterGarble = function() {
+  this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+  var freq = Tone.Midi(this.pitch + 12).toFrequency();
+  this.filt.frequency.value = (freq);
+  //this.filt2.frequency.value = (freq);
+  var rate = Math.floor(Math.random() * (12.) + 4.);
+  this.tremolo.frequency.value = freq;
+
+  this.synth.triggerAttackRelease(freq, "8n", '+0', 0.2);
+
+  console.log('filterGarble', freq)
+    // this.count = this.count - 1;
+    // console.log(this.count, this.count > 0);
+
+  // if (this.count > 0) {
+  //   console.log(this.count, this.count > 0);
+  //   var bob = setInterval(this.filterGarble.bind(this), 100);
+  // }
 };

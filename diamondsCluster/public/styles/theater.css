@@ -37,6 +37,7 @@ body {
   right: 0;
 }
 
+
 /* .sessionName {
   position: absolute;
   font-size: 0.55em;
@@ -63,7 +64,8 @@ body {
   width: 75%;
 }
 
-.newgentext {}
+
+/* .newgentext {} */
 
 
 /*#generatedText h1{
@@ -241,4 +243,3 @@ video#bgvid {
   /*width: 20px;*/
   height: 25px;
 }
-

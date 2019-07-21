@@ -85,7 +85,7 @@
     // Only for the Overlay/intro page
 
 
-    socket.on('registerComplete', function (data) {
+    socket.on('registerComplete', function(data) {
       console.log("registerComplete: ", data);
       user.socketID = data.socketID;
       localStorage.setItem("socketID", data.socketID);
@@ -96,7 +96,7 @@
       }
     });
 
-    socket.on('setSection', function (data) {
+    socket.on('setSection', function(data) {
       console.log("The section is now: " + data.title);
     });
 
@@ -120,7 +120,7 @@
       }
     }
 
-    socket.on('itemback', function (data) {
+    socket.on('itemback', function(data) {
       console.log("itemback: " + data.sessionName, data.phrase);
       if (data.sessionName == user.sessionName) {
 
@@ -170,7 +170,8 @@
       // var num = section.split("s")[1];
       console.log("curr:", currentPhrase);
       socket.emit("selectedPhrase", {
-        'phrase': currentPhrase
+        'phrase': currentPhrase,
+        'sessionName': user.sessionName
       });
     }
 
@@ -211,7 +212,7 @@
 
 
       // xhr.open('GET', '../data/score.txt', true);
-      xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return;
         if (this.status !== 200) return; // or whatever error handling you want
         document.getElementsByClassName('scoreText')[0].innerHTML = this.responseText;
