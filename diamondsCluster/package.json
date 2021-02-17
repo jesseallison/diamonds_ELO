@@ -5,7 +5,7 @@
     "main": "diamondsCluster.js",
     "scripts": {
         "start": "node diamondsCluster.js",
-        "redis": "docker run --name some-redis -d redis:5 -p 6379:6379",
+        "redis": "docker run --name some-redis -p 6379:6379 -d redis:5",
         "redis-persist": "docker run --name some-redis -d redis:5 redis-server --appendonly yes -p 6379:6379",
         "install-redis": "docker pull redis",
         "corpus-prep": "node ./js/loadCorpus.js"
