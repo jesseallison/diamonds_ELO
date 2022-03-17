@@ -40,6 +40,12 @@ let corpii = [{
   'url': './data/seeds/rivergration/corpus.txt'
 }];
 
+// Uncomment to Include diamonds corpus?
+corpii.push({
+  'name': 'diamonds',
+  'url': './data/seeds/diamonds/corpus.txt'
+})
+
 // TextName for storing as a set
 let textName = "diamonds-corpus"
   // Path to the data to load.  txt file.

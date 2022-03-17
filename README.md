@@ -13,6 +13,7 @@
 - [ ] Add random selection of corpus segments if not enough return.
 - [ ] (Jesse) hy does loadtext-ish take so long?
 
+
 **Later**
 - [ ] Create interface for poet to be able to choose different pairings from seeds and corpora
 - [ ] use socket.io rooms/groups to tie session user together – Right now they simply append -sessionName to the controller, theater, etc. and store them as separate ids.  This works quite well so far for the unique pages. Should probably keep even after moving to rooms/groups.
@@ -21,6 +22,7 @@
 - [ ] Replace markov with machine learning
 
 **Done**
+- [x] (Jesse) Double check that corpii are loading properly. Right now, corpus.csv (diamonds) is only creating 1 set as opposed to hundreds...
 - [x] (Derick)Add session chooser to "I am theater" link from portal
 - [x] (Derick)Add session chooser to "I am poet" at the top in case poet needs to rejoin session
 - [x] simplify the sesssion chooser
@@ -30,6 +32,23 @@
   - The main index page allows users to set a sessionName this is stored on the server as well as in localStorage.  On any subsequent page on this domain you can get this sessionName via:  localStorage.getItem('sessionName')
 - [x] Reformat parsing of corpus into ≈500 line segments
 - [x] Run on web server at http://dystopia.emdm.io (linked to http://atlab.cct.lsu.edu:8001)
+
+## Deploy on gcloud App Engine Flex
+
+Not quite ready yet, but these will be the commands...
+
+```gcloud config set project dotted-repeater-177306```
+
+```
+gcloud app deploy -v dev
+gcloud app browse
+```
+
+```
+gcloud app versions list
+gcloud app versions stop dev
+```
+
 
 ## Start with Docker Compose)
 

@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://emdm.io", "https://www.emdm.io", "https://d.emdm.io", "https://live.emdm.io", "https://dystopia.emdm.io","http://localhost:8080", "http://192.168.20.100:8080"],
+    "method": ["GET"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]

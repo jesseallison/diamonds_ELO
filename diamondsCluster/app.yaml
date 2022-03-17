@@ -1,0 +1,32 @@
+# Google App Engine Configuration
+# [START appengine_websockets_yaml]
+runtime: nodejs
+env: flex
+
+env_variables:
+  GOOGLE_CLOUD_PROJECT: dotted-repeater-177306
+  # GCLOUD_STORAGE_BUCKET: emdm-c4te-f2020
+
+# Use only a single instance, so that this local-memory-only chat app will work
+# consistently with multiple users. To work across multiple instances, an
+# extra-instance messaging system or data store would be needed.
+manual_scaling:
+  instances: 1
+
+network:
+  session_affinity: true
+# [END appengine_websockets_yaml]
+
+# handlers:
+#   - url: /favicon\.ico
+#     static_files: favicon.ico
+#     upload: favicon\.ico
+
+#   - url: /static
+#     static_dir: public
+
+#   - url: /.*
+#     secure: always
+#     redirect_http_response_code: 301
+#     script: auto
+

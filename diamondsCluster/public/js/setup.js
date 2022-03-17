@@ -67,6 +67,39 @@ var dSound = new DiamondSound();
 FUNCTIONS
 **********************************************/
 
+function getUserSessionData(){
+  if(localStorage.getItem('userId')) {
+    user.id = localStorage.getItem("userId");
+    if (localStorage.getItem("sessionName")) {
+      user.sessionName = localStorage.getItem("sessionName");
+    }
+    if(localStorage.getItem('userCorpus')) {
+      user.corpus = localStorage.getItem("userCorpus");
+    }
+    if(localStorage.getItem('userName')) {
+      user.name = localStorage.getItem("userName");
+    }
+    if(localStorage.getItem('userColor')) {
+      user.color = localStorage.getItem("userColor");
+    }
+    if(localStorage.getItem('userDate')) {
+      user.date = localStorage.getItem("userDate");
+    }
+    if(localStorage.getItem('userLocation')) {
+      user.location = localStorage.getItem("userLocation");
+    }
+  } else {
+    localStorage.setItem('id', user.id);
+    localStorage.setItem('userName', user.name);
+    localStorage.setItem('userCorpus', user.corpus);
+    localStorage.setItem('userColor', user.color);
+    localStorage.setItem('userLocation', user.location);
+    localStorage.setItem('userDate', user.date);
+  }
+ 
+}
+getUserSessionData();
+
 function actOnText() {
   var contents = $('.scoreText').text().split(" "),
     modText = '';
@@ -197,6 +230,11 @@ socket.on('audienceEnable', function (data) {
 });
 
 
+function chooseCorpus(corpusName = 'horrortech') {
+  localStorage.setItem("userCorpus", corpusName);
+  user.corpus = corpusName;
+}
+
 /**********************************************
 REGISTRATION
 **********************************************/
@@ -212,24 +250,27 @@ function registerWithServer() {
 registerWithServer();
 
 
-function registerPoet(corpusName = 'horrortech-corpus') {
+function registerPoet(corpusName) {
   let sessionName = document.forms["poet-form"]["session-name"].value;
-  // let corpusName = document.forms["poet-form"]["corpus-name"].value;
-  console.log("Session Name: ", sessionName);
-  console.log("Corpus Name: ", corpusName);
+  user.sessionName = sessionName;
+  if(corpusName){
+    user.corpus = corpusName
+  }
+
+  console.log("Session Name: ", user.sessionName);
+  console.log("Corpus Name: ", user.corpus);
 
   socket.emit('registerSession', {
     'username': user.name,
-    'sessionName': sessionName,
-    'corpus': corpusName,
+    'sessionName': user.sessionName,
+    'corpus': user.corpusName,
     'color': user.color,
     'date': user.date
   });
-  localStorage.setItem("sessionName", sessionName);
-  localStorage.setItem("corpus", corpusName);
+  localStorage.setItem("sessionName", user.sessionName);
+  localStorage.setItem("userCorpus", user.corpus);
   localStorage.setItem("userColor", user.color);
-  user.sessionName = sessionName;
-  user.corpus = corpusName;
+
   return false;
 };
 

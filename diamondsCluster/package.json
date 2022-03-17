@@ -8,7 +8,8 @@
         "redis": "docker run --name some-redis -p 6379:6379 -d redis:5",
         "redis-persist": "docker run --name some-redis -d redis:5 redis-server --appendonly yes -p 6379:6379",
         "install-redis": "docker pull redis",
-        "corpus-prep": "node ./js/loadCorpus.js"
+        "corpus-prep": "node ./js/loadCorpus.js",
+        "gcloud-deploy": "gcloud app deploy"
     },
     "repository": {
         "type": "git",
