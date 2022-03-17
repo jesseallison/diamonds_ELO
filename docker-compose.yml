@@ -23,7 +23,10 @@ services:
       - ./diamondsCluster:/home/node/app
     ports:
       - "8001:8080"
-    command: npm start
+    command: sh -c "
+        npm run corpus-prep 
+        && npm start
+      "
     networks:
       - comm
 
