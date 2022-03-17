@@ -159,6 +159,10 @@ function putInText(seedPath = "/data/score.txt") {
     seedPath = "/data/seeds/rivergration/seed.txt"
   }
 
+  if (user.corpus == "diamonds-corpus") {
+    seedPath = "/data/seeds/diamonds/seed.txt"
+  }
+
   console.log("seedPath", seedPath);
   xhr.open('GET', seedPath, true);
   xhr.onreadystatechange = function() {
