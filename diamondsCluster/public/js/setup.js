@@ -233,6 +233,7 @@ socket.on('audienceEnable', function (data) {
 function chooseCorpus(corpusName = 'horrortech') {
   localStorage.setItem("userCorpus", corpusName);
   user.corpus = corpusName;
+  console.log("Corpus = ", corpusName)
 }
 
 /**********************************************
@@ -263,7 +264,7 @@ function registerPoet(corpusName) {
   socket.emit('registerSession', {
     'username': user.name,
     'sessionName': user.sessionName,
-    'corpus': user.corpusName,
+    'corpus': user.corpus,
     'color': user.color,
     'date': user.date
   });
