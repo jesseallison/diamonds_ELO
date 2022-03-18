@@ -24,8 +24,7 @@ services:
     ports:
       - "8001:8080"
     command: sh -c "
-        chown node:node /home/node/app
-        && npm install
+        npm install
         && npm run corpus-prep 
         && npm start
       "
