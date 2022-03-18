@@ -24,7 +24,8 @@ services:
     ports:
       - "8001:8080"
     command: sh -c "
-        npm run corpus-prep 
+        npm install
+        && npm run corpus-prep 
         && npm start
       "
     networks:
