@@ -13,7 +13,6 @@ services:
   
   node:
     image: node:12
-    user: "node"
     working_dir: /home/node
     environment:
       - NODE_ENV=production
@@ -28,6 +27,7 @@ services:
         && npm run corpus-prep 
         && npm start
       "
+    user: "node"
     networks:
       - comm
 
