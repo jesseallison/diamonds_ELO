@@ -13,21 +13,22 @@ services:
   
   node:
     image: node:12
-    working_dir: /home/node
+    user: node
+    working_dir: /home/node/app
     environment:
       - NODE_ENV=production
       - REDISIP=redis_db
       - PORT=8080 
     volumes:
-      - ./diamondsCluster:/home/node
+      - ./diamondsCluster:/home/node/app
     ports:
       - "8001:8080"
     command: sh -c "
-        npm install
+        chown node:node /home/node/app
+        && npm install
         && npm run corpus-prep 
         && npm start
       "
-    user: "node"
     networks:
       - comm
 
