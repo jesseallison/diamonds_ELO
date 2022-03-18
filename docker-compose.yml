@@ -14,13 +14,13 @@ services:
   node:
     image: node:12
     user: "node"
-    working_dir: /home/node/app
+    working_dir: /home/node
     environment:
       - NODE_ENV=production
       - REDISIP=redis_db
       - PORT=8080 
     volumes:
-      - ./diamondsCluster:/home/node/app
+      - ./diamondsCluster:/home/node
     ports:
       - "8001:8080"
     command: sh -c "
