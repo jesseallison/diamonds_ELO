@@ -50,14 +50,14 @@ gcloud app versions stop dev
 ```
 
 
-## Start with Docker Compose)
+## Start with Docker Compose
 
 ```bash
 npm install
 docker-compose up
 ```
 
-### For Production Use
+### For Production, Use
 
 ```bash
 npm install
@@ -70,6 +70,12 @@ and the follwoing to check in your code
 docker-compose ps
 docker-compose logs -f
 ```
+
+## Troubleshooting
+
+Sometimes allowing node to run on port 80 without root is useful...
+
+`sudo setcap CAP_NET_BIND_SERVICE=+eip /usr/bin/node`
  
 ## To Start Manually
 
