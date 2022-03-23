@@ -1,10 +1,11 @@
 {
     "name": "diamonds_elo",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Diamonds in Dystopia ELO update.",
     "main": "diamondsCluster.js",
     "scripts": {
         "start": "node diamondsCluster.js",
+        "start-80": "PORT=80 node diamondsCluster.js",
         "redis": "docker run --name some-redis -p 6379:6379 -d redis:5",
         "redis-persist": "docker run --name some-redis -d redis:5 redis-server --appendonly yes -p 6379:6379",
         "install-redis": "docker pull redis",

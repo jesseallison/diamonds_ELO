@@ -5,14 +5,11 @@ This file includes 2 things:
 - Helpful JS functions
 - Websocket message handling
 
-// It is referenced by 3(soon to be 2) files:
+// It is referenced by 2 files:
+//  index.html
+//  /setup/index.html
 
-//   -/sessions/audience.html -
-//   /sessions/theater.html -
-//   /setup/index.html
-
-//   *
-//   /
+/*
 
 /**********************************************
 VARIABLES
@@ -33,34 +30,7 @@ var socket = io.connect(window.location.origin, {
   transports: ['websocket']
 });
 
-$('.scoreText').click(function (e) {
-  target = event.target || event.srcElement;
-
-  if (target.nodeName.toLowerCase() === "span") {
-    var text = $(e.target).text();
-
-    // console.log("text:",text);
-    // $(e.target).toggleClass('underline');
-    $(e.target)[0].style.backgroundColor = user.color;
-    // console.log($(e.target)[0]);
-    dSound.speak(text);
-    socket.emit('item', text);
-  }
-});
-
-
 var myLocation = [0.5, 0.5]; // Default centered
-
-
-
-
-var speakVoice = 'en/en';
-meSpeak.loadConfig("/js/mespeak/mespeak_config.json");
-//meSpeak.loadVoice('js/mespeak/voices/en/en-us.json');
-meSpeak.loadVoice('/js/mespeak/voices/' + speakVoice + '.json');
-//meSpeak.speak('hello world',{},toneSetup());
-
-var dSound = new DiamondSound();
 
 
 /**********************************************
@@ -100,32 +70,6 @@ function getUserSessionData(){
 }
 getUserSessionData();
 
-function actOnText() {
-  var contents = $('.scoreText').text().split(" "),
-    modText = '';
-
-  for (var i = 0; i < contents.length; i++) {
-    modText += '<span>' + contents[i] + '</span> ';
-  }
-
-  $('.scoreText').html(modText);
-
-}
-
-// function createUL(array) {
-//   let str = '<ul>'
-
-//   array.forEach(function (slide) {
-//     str += '<li>' + slide + '</li>';
-//   });
-
-//   str += '</ul>';
-
-//   let myEle = document.getElementById("session-list");
-//   if (myEle) {
-//     document.getElementById("session-list").innerHTML = str;
-//   }
-// }
 
 function createOpts(sessionArray) {
 
@@ -215,30 +159,30 @@ socket.on('sessions', function (data) {
   }
 });
 
-socket.on('setSection', function (data) {
-  console.log("the section is now: " + data.title);
-});
+// socket.on('setSection', function (data) {
+//   console.log("the section is now: " + data.title);
+// });
 
 socket.on('chat', function (data) {
   console.log("chat: " + data);
 });
 
 
-socket.on('audienceEnable', function (data) {
-  console.log('enabled? ', data);
-  dSound.audienceEnable(data);
-});
+// socket.on('audienceEnable', function (data) {
+//   console.log('enabled? ', data);
+//   dSound.audienceEnable(data);
+// });
 
+
+/**********************************************
+REGISTRATION
+**********************************************/
 
 function chooseCorpus(corpusName = 'horrortech') {
   localStorage.setItem("userCorpus", corpusName);
   user.corpus = corpusName;
   console.log("Corpus = ", corpusName)
 }
-
-/**********************************************
-REGISTRATION
-**********************************************/
 
 function registerWithServer() {
   socket.emit('addme', {
@@ -255,7 +199,7 @@ function registerPoet(corpusName) {
   let sessionName = document.forms["poet-form"]["session-name"].value;
   user.sessionName = sessionName;
   if(corpusName){
-    user.corpus = corpusName
+    chooseCorpus(corpusName);
   }
 
   console.log("Session Name: ", user.sessionName);
@@ -268,9 +212,6 @@ function registerPoet(corpusName) {
     'color': user.color,
     'date': user.date
   });
-  localStorage.setItem("sessionName", user.sessionName);
-  localStorage.setItem("userCorpus", user.corpus);
-  localStorage.setItem("userColor", user.color);
 
   return false;
 };
@@ -311,6 +252,6 @@ socket.on('registerComplete', function (data) {
   localStorage.setItem("socketID", data.socketID);
   if (data.corpus) {
     user.corpus = data.corpus;
-    localStorage.setItem("corpus", data.corpus);
+    localStorage.setItem("userCorpus", data.corpus);
   }
 });

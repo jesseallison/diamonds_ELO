@@ -70,6 +70,7 @@ function start() {
 
 if (cluster.isMaster) {
   var loadCorpus = require('./js/loadCorpus.js');
+  console.log(`------ Diamonds listening on port: ${serverPort} ------`)
   console.log('start cluster with %s workers', workers - 1);
   workers--;
   for (var i = 0; i < workers; ++i) {
@@ -362,7 +363,7 @@ if (cluster.isMaster) {
             // 'An iteration starts when the cursor is set to 0,
             // and terminates when the cursor returned by the server is 0.'
             if (cursor === '0') {
-              console.log('--- Iteration complete, matches below ---');
+              console.log(`--- Iteration complete, ${matchingTexts.length} matches below ---`);
               if (matchingTexts.length < 10) {
                 // Not enough, add random texts.
                 let texts = redisClient.srandmember(socket.corpus, (10 - matchingTexts.length), function(err, reply) {
