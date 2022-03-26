@@ -557,6 +557,12 @@ if (cluster.isMaster) {
       console.log("audience/enable", data);
       io.sockets.emit('audienceEnable', data);
     });
+    
+    // TODO: stash state values like masterGain and send to new joiners
+    socket.on('audio', function(data) {
+      console.log("audio", data);
+      io.sockets.emit('audio', data);
+    });
 
 		// Reading Text on every user by line number
     socket.on('readText', function(data) {

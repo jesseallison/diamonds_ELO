@@ -295,6 +295,13 @@ socket.on('audienceEnable', function(data) {
   dSound.audienceEnable(data);
 });
 
+socket.on('audio', (data) => {
+  if(data.command == 'masterGain') {
+    console.log("masterGain: ", data.value);
+    dSound.masterGain(data.value);
+  }
+})
+
 
 // Reading Text by line number
 socket.on('readText', function(data) {

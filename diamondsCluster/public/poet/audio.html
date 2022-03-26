@@ -5,24 +5,48 @@
 	<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<link rel="stylesheet" href="/styles/main.css">
+	<!-- <link rel="stylesheet" href="/styles/main.css"> -->
+	<link rel="stylesheet" href="/styles/controller.css">
 
 	<link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
 
 	<script src="/socket.io/socket.io.js"></script>
+  <script src="/js/nexusUI.js"></script>
 	<!-- <script type="text/javascript" src="js/Tone.min.js"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="/data/DiD-reading/readingTexts.js"></script>
+
 </head>
 
 <body>
-	
-	<button onclick="socket.emit('triggerBeginning')">Beginning</button>
-	<button onclick="socket.emit('nextChord')">New Chords</button>
-	<button onclick="socket.emit('triggerUtopalypse')">Utopia is our Apocalypse</button>
-	<button onclick="socket.emit('triggerDiamonds')">Diamonds in Distopia</button>
-	<button onclick="socket.emit('triggerEnding')">Ending</button>
-	
-	
+	<div>
+    <button onclick="socket.emit('triggerBeginning')">Beginning</button>
+    <button onclick="socket.emit('nextChord')">New Chords</button>
+    <button onclick="socket.emit('triggerUtopalypse')">Utopia is our Apocalypse</button>
+    <button onclick="socket.emit('triggerDiamonds')">Diamonds in Distopia</button>
+    <button onclick="socket.emit('triggerEnding')">Ending</button>
+  </div>
+  <div>
+    <button onclick="socket.emit('start')">Start</button>
+    <button onclick="socket.emit('excite')">Excite</button>
+    <button onclick="echo()">Echo</button>
+    <button onclick="socket.emit('kill')">Kill</button>
+    <button onclick="socket.emit('volta')">Volta</button>
+    <button onclick="socket.emit('end')">End</button>
+  </div>
+  <div>
+    <button onclick="socket.emit('triggerBeginning')">Beginning</button>
+    <button onclick="socket.emit('playChord')">Play Chord</button>
+    <button onclick="socket.emit('audience/enable', 1)">Audience Enable</button>
+    <button onclick="socket.emit('audience/enable', 0)">Silence</button>
+    <button onclick="socket.emit('sustainChord')">Sustain Chord</button>
+  </div>
+  <div id="nxDiv">
+  </div>
+  <div class="scroll-wrapper">
+    <!-- <iframe src="" class="myFrame"></iframe> -->
+  </div>
+  <div class="scoreText audioStuff"></div>
 
 <script>
 
@@ -33,8 +57,80 @@
 	var myColor = getRandomColor();
 	var myLocation = [0.5, 0.5];	// Default centered
 	
+  let masterGain = new Nexus.Add.Slider('#nxDiv', {
+   'size': [200,40],
+   'min': -96,
+   'max': 0.,
+   'value': 0.
+  })
+  masterGain.on('change', (val)=>{
+    socket.emit('audio', {
+      command: 'masterGain',
+      value: val
+    })
+  });
+
+  function setUpTexts() {
+    let score = document.getElementsByClassName('scoreText')[0];
+
+    for(let item in readingTexts) {
+      let entry = `<div class='readingText' onclick="readText('${item}')">${item}: ${readingTexts[item]}</div>`;
+      score.innerHTML = score.innerHTML + entry;
+    }
+  }
+  setUpTexts();
+
 	socket.emit('addme', {name: "audio_controller", color: myColor, note: 60, location: myLocation});
 
+  // Respond to stuff
+	socket.on('/diamonds/selectedPhrase', function(data) {
+		// console.log("New Phrase: "+ data.phrase);
+		// window.max.outlet('/diamonds/selectedPhrase'+" " + data.phrase)
+	});
+
+
+
+  // ********* Transmit Commands ********
+
+		// Reading Text on every user by line number
+  function readText(num) {
+		socket.emit('readText', num);
+	}
+	
+
+  function playChord(keys) {
+		var notes = [];
+		for(var key in keys) {
+		    if(keys.hasOwnProperty(key)) {
+		        notes.push(keys[key]);
+		    }
+		}
+		socket.emit('playChord', {notes:notes, duration:'8m'});
+	}
+	
+  function silence() {
+		socket.emit('silence');
+	}
+	
+  function audienceEnable(enabled) {
+		socket.emit('audience/enable', enabled);
+	}
+
+  function sustainChord(keys) {
+		var notes = [];
+		for(var key in keys) {
+		    if(keys.hasOwnProperty(key)) {
+		        notes.push(keys[key]);
+		    }
+		}
+		socket.emit('sustainChord', {notes:notes, duration:'8m'});
+	}
+	
+	// document.getElementById('the_click_button').addEventListener('click', function() {
+	// 	window.max.outlet('click', ++i);
+	// });
+
+  // ********** Helper Functions **********
 
 	function getRandomColor() {
 		var letters = '0123456789ABCDEF'.split('');

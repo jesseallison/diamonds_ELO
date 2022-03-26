@@ -107,6 +107,11 @@ DiamondSound.prototype.audienceEnable = function(enabled) {
   }
 }
 
+DiamondSound.prototype.masterGain = function(gain) {
+  this.gainMaster.volume.value = gain;
+  // this.chordSynth.set("volume", this.chordVolume);
+}
+
 DiamondSound.prototype.phrygian = function(midi) {
   return teoria.note.fromMIDI(midi);
 }
