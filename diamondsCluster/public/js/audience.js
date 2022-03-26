@@ -113,12 +113,30 @@ $('.scoreText').click(function(e) {
 });
 
 
-// function scrollto(element){
-// 	var ele = document.getElementsByClassName("s"+element)[0];
-//     if (ele) {
-//     	window.scrollTo(0, ele.offsetTop);
-//     }
-// }
+
+function scrollto(element){
+	var page = $('html, body');
+	var ele = document.getElementsByClassName("s_"+element.trim())[0];
+    if (ele) {
+    	// window.scrollTo(0, ele.offsetTop);
+			// - or -
+    	// window.scrollTo({
+			//   top: ele.offsetTop, 
+			//   left: 0, 
+			//   behavior: 'smooth' 
+			// });
+			
+			// - or with jQuery - 
+			page.animate({ scrollTop: ele.offsetTop }, 1000, function(){
+				page.off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove touch");
+			});
+			
+			page.on("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove touch", function(){
+			    page.stop();
+			});
+			
+    }
+}
 
 // function clickgo() {
 // 	var elements = document.getElementsByClassName(this.className);
@@ -275,6 +293,17 @@ socket.on('itemback', function(data) {
 socket.on('audienceEnable', function(data) {
   console.log('enabled? ', data);
   dSound.audienceEnable(data);
+});
+
+
+// Reading Text by line number
+socket.on('readText', function(data) {
+  console.log("readText", readingTexts[data]);
+  if (Math.random() < dSound.readingRatio) {
+    dSound.readText(data);
+    var words = readingTexts[data].split(" ");
+    scrollto(words[0]); // find the first word of the phrase and scroll to it.
+  }
 });
 
 

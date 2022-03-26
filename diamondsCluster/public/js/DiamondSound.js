@@ -63,7 +63,7 @@ var DiamondSound = function() {
   this.playerKepler.retrigger = 1;
   this.playerEnding = new Tone.Player("/data/Ending_for_a_minute.mp3").connect(this.gainMaster);
 	// Dynamically loaded readings
-  this.playerReading = new Tone.Player({url: "data/DiD-reading/0.mp3", "autostart" : true}).connect(this.gainMaster);
+  this.playerReading = new Tone.Player({url: "/data/DiD-reading/0.mp3", "autostart" : true}).connect(this.gainMaster);
   this.playerReading.volume.value = -6;
 
   this.playerBackground.volume.value = -12;
@@ -213,7 +213,7 @@ DiamondSound.prototype.sampPlay = function(midi) {
 
 DiamondSound.prototype.readText = function (num) {
 	if(readingTexts.hasOwnProperty(num)){
-		this.playerReading.load("data/DiD-reading/" + num + ".mp3");
+		this.playerReading.load("/data/DiD-reading/" + num + ".mp3");
 		return readingTexts[num];
 	}
 }
