@@ -90,6 +90,7 @@ if (cluster.isMaster) {
 
   // redisClient.del('sessionList');
 
+  var readingTexts = require('./public/data/DiD-reading/readingTexts.json');
   var rita = require('rita');
 
   var dataObj = [];
@@ -137,6 +138,14 @@ if (cluster.isMaster) {
     'name': 'rivergration',
     'redis-name': 'rivergration-corpus',
     'url': './data/seeds/rivergration/corpus.txt'
+  },{
+    'name': 'diamonds',
+    'redis-name': 'diamonds-corpus',
+    'url': './data/seeds/diamonds/corpus.txt'
+  }, {
+    'name': 'gawe',
+    'redis-name': 'gawe-corpus',
+    'url': './data/seeds/gawe/corpus.txt'
   }];
 
   // Make the default Session
@@ -488,6 +497,7 @@ if (cluster.isMaster) {
     });
 
 
+    // Poet Controls
 
     socket.on('start', function(data) {
       console.log("start: ", data);
@@ -541,12 +551,18 @@ if (cluster.isMaster) {
       redisClient.lpush("interactionTrail", data); // Store for some other time...
     })
 
+    // Audio Controller
+
     socket.on('audience/enable', function(data) {
       console.log("audience/enable", data);
       io.sockets.emit('audienceEnable', data);
     });
 
-
+		// Reading Text on every user by line number
+    socket.on('readText', function(data) {
+      console.log("readText", readingTexts[data]);
+      io.sockets.emit('readText', data);
+    });
 
     socket.on('nextChord', function(data) {
       redisClient.get('audioControllerID-' + socket.sessionName, function(err, reply) {

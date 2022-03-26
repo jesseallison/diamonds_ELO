@@ -75,8 +75,8 @@ docker-compose logs -f
 log into the GCE instance
 
 ```
-cd /srv/diamonds/
-git pull
+cd /srv/diamonds_ELO/
+sudo git pull
 docker-compose up -d
 ```
 

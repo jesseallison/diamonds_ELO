@@ -73,11 +73,11 @@ getUserSessionData();
 
 function createOpts(sessionArray) {
 
-  let audienceText = '<option name="session-name">audience</option><option disabled>Choose a session:</option>';
+  let audienceText = '<option name="session-name">audience</option> <optgroup> <option disabled>Choose a session:</option>';
 
-  let theaterText = '<option name="session-name">theater</option><option disabled>Choose a session:</option>';
+  let theaterText = '<option name="session-name">theater</option> <optgroup> <option disabled>Choose a session:</option>';
 
-  let poetText = '<option>Choose</option>';
+  let poetText = '<optgroup> <option>Choose</option>';
 
   let selectArrayAudience = [], selectArrayTheater = [], selectArrayPoet = [];
 
@@ -98,7 +98,7 @@ function createOpts(sessionArray) {
     for (let sessionItem of sessionArray) {
       sessionNames += '<option value="/audience" name="session-name">' + sessionItem + '</option>';
     }
-    selectItem.innerHTML = audienceText + sessionNames;
+    selectItem.innerHTML = audienceText + sessionNames + "</optgroup>";
   }
 
   for (let selectItem of selectArrayTheater) {
@@ -106,7 +106,7 @@ function createOpts(sessionArray) {
     for (let sessionItem of sessionArray) {
       sessionNames += '<option value="/theater" name="session-name">' + sessionItem + '</option>';
     }
-    selectItem.innerHTML = theaterText + sessionNames;
+    selectItem.innerHTML = theaterText + sessionNames + "</optgroup>";
   }
 
   for (let selectItem of selectArrayPoet) {
@@ -114,7 +114,7 @@ function createOpts(sessionArray) {
     for (let sessionItem of sessionArray) {
       sessionNames += '<option value="/poet" name="session-name">' + sessionItem + '</option>';
     }
-    selectItem.innerHTML = poetText + sessionNames;
+    selectItem.innerHTML = poetText + sessionNames + "</optgroup>";
   }
 
   let sessionSelectClass = document.getElementsByClassName("sessionSelect");

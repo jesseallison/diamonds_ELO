@@ -62,6 +62,9 @@ var DiamondSound = function() {
   this.playerKepler = new Tone.Player("/data/Kepler_Star.mp3").connect(this.gainMaster);
   this.playerKepler.retrigger = 1;
   this.playerEnding = new Tone.Player("/data/Ending_for_a_minute.mp3").connect(this.gainMaster);
+	// Dynamically loaded readings
+  this.playerReading = new Tone.Player({url: "data/DiD-reading/0.mp3", "autostart" : true}).connect(this.gainMaster);
+  this.playerReading.volume.value = -6;
 
   this.playerBackground.volume.value = -12;
 
@@ -182,6 +185,39 @@ DiamondSound.prototype.playChordSplit = function() {
 DiamondSound.prototype.playChordDiads = function() {
 
 };
+
+
+
+// ********* Sampler playing ********
+
+// dSound.sampPlay(60) || dSound.sampPlay(0,440.)
+DiamondSound.prototype.sampPlay = function(midi) {
+  // console.log("freq: ", freq);
+  // if (freq==null) {
+  // 	freq = nxMusic.mtof(note);
+  // }
+  // console.log("post check freq: ", freq);
+  // var midi = this.tune.key + 12*Math.log(freq/440)/Math.log(2)
+  
+  
+  console.log("midi: ", midi);
+  this.samp.triggerAttack();
+
+  // Detune each piano sample 
+  this.samp.pitch = this.tune.note(midi-this.tune.scale.length)-this.tune.key; 
+  console.log("pitch: ", this.samp.pitch);
+}
+    
+
+// ************** Reading from Files  *****************
+
+DiamondSound.prototype.readText = function (num) {
+	if(readingTexts.hasOwnProperty(num)){
+		this.playerReading.load("data/DiD-reading/" + num + ".mp3");
+		return readingTexts[num];
+	}
+}
+
 
 DiamondSound.prototype.playUtopalypse = function() {
   this.playerKepler.start();

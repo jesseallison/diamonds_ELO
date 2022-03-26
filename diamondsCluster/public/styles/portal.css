@@ -185,9 +185,11 @@ h3 {
   -moz-appearance: none;
   border: none;
   background-color: transparent; 
-  font-size: calc(14px + 6.5vw);
+  font-size: calc(14px + 3vw);
   width: 100%;
 }
+
+/* optgroup { font-size: calc(14px + 3vw) } */
 
 #poetSelect>.sessionSelect {
   color:#fff;
