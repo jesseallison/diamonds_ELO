@@ -96,6 +96,40 @@ gcloud app versions list
 gcloud app versions stop dev
 ```
 
+### Downloading the redis backup file
+
+[From Here](https://stackoverflow.com/questions/49425065/docker-redis-backup)
+
+This creates a temp debian container, sets a volume to the current path, connects to the redis container you made, copies the data/dump.rdb file to the local volume and then shuts down and deletes itself.
+
+```
+docker run --rm --volumes-from diamonds_elo_redis_1 -v $(pwd)/backup:/backup debian cp /data/dump.rdb /backup/
+```
+
+Then in the ssh window of GCE - press the gear, select Download file and put in the fully qualified path to the backup/dump.rdb file you just made:
+```
+/home/allisonification/backup/dump.rdb
+```
+
+### GCE DNS settings in Cloudflare
+
+AAAA
+emdm.io
+2001:4860:4802:38::15
+
+AAAA
+emdm.io
+2001:4860:4802:36::15
+
+AAAA
+emdm.io
+2001:4860:4802:34::15
+
+AAAA
+emdm.io
+2001:4860:4802:32::15
+
+
 
 ## Troubleshooting
 
